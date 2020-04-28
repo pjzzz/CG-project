@@ -72,8 +72,14 @@ class Bond
 
 		Bond(Atom a, Atom b)
 		{
-			atom1=a;
-			atom2=b;
+			atom1.atomic_no=a.atomic_no;
+            atom1.x = a.x;
+            atom1.y = a.y;
+            atom1.z = a.z;
+			atom2.atomic_no=b.atomic_no;
+            atom2.x = b.x;
+            atom2.y = b.y;
+            atom2.z = b.z;
 		}
 
 		void draw(int molnum)
