@@ -18,6 +18,14 @@ public:
     	z = z_cord;
     }
 
+    Atom( const Atom &atom_copy)
+    {
+        atomic_no=atom_copy.atomic_no;
+        x = atom_copy.x;
+        y = atom_copy.y;
+        z = atom_copy.z;
+    }
+
     double DistanceSquared(Atom other) //Distance between the current atom and the atom which is passed 
     {
         return (x-other.x)*(x-other.x)+(y-other.y)*(y-other.y)+(z-other.z)*(z-other.z);
@@ -86,6 +94,17 @@ public:
 	vector<Bond> bonds;
 
     Molecule(){}
+
+    Molecule(const Molecule &molecule_copy)
+    {
+        int atom_size = molecule_copy.atoms.size();
+        int bonds_size = molecule_copy.bonds.size();
+
+        for(int i=0;i<atom_size;i++)
+            atoms.push_back(molecule_copy.atoms[i]);
+        for(int i=0;i<bonds_size;i++)
+            bons.push_back(molecule_copy.bonds[i]);
+    }
 
 	void draw(int molnum)
 	{
