@@ -1,4 +1,4 @@
-#include "Data.cpp"
+//#include "Data.cpp"
 #include "Functions.cpp"
 
 using namespace std;
@@ -109,7 +109,7 @@ public:
         for(int i=0;i<atom_size;i++)
             atoms.push_back(molecule_copy.atoms[i]);
         for(int i=0;i<bonds_size;i++)
-            bons.push_back(molecule_copy.bonds[i]);
+            bonds.push_back(molecule_copy.bonds[i]);
     }
 
 	void draw(int molnum)
@@ -140,13 +140,15 @@ public:
 	void getReactants()
 	{
 		string filename = "./Reactions/"+Name+"_Reactants.txt";
+		cout<<filename<<endl;
 		ifstream file(filename);
 
 		string line;
 		while(getline(file,line))
 		{
-			Molecule molecule= ParseData(line);
-			Reactants.push_back(molecule);
+			cout<<line<<endl;
+			Molecule molecule = ParseData(line);
+			Reactants.emplace_back(molecule);
 		}
 	}
 
@@ -159,25 +161,25 @@ public:
 		while(getline(file,line))
 		{
 			Molecule molecule= ParseData(line);
-			Products.push_back(molecule);
+			Products.emplace_back(molecule);
 		}
 	} 
 
 	Reaction(string react_name)
 	{
-		Name= react_name;
+		Name = react_name;
 		getReactants();
 		getProducts();
 	}
 
 	void draw()
 	{
-		int react= Reactants.size(),prod= Products.size();
-		int num= (react+prod),half=num/2;
+		int react = Reactants.size(),prod= Products.size();
+		int num = (react+prod),half=num/2;
 
-		int molnum=-half;
+		int molnum = -half;
 
-		int react_count=1,prod_count=1;
+		int react_count = 1,prod_count=1;
 
 		for(auto it = Reactants.begin(); it != Reactants.end(); it ++)
 		{
@@ -258,15 +260,18 @@ Molecule ParseData(string filename)
 
     while (getline(file, line))
     {
-    	string symbol;
+		string symbol;
     	int count;
     	double x,y,z;
 
     	if (sscanf(line.c_str(), "%s %lf %lf %lf", &symbol, &x, &y, &z) == 4)
     	{
-    		int atomic_num=atom_symbol[symbol];
-    		Atom newAtom(atomic_num,x,y,z);
-    		molecule.atoms.push_back(newAtom);
+    		cout<<line<<endl;
+			int atomic_num=atom_symbol[symbol];
+			printf("%d %d %d\n",x,y,z);
+    		//yaha se kuch error aana shuru hua hai
+			Atom newAtom(atomic_num,x,y,z);
+    		molecule.atoms.emplace_back(newAtom);
     	}
     	else if(sscanf(line.c_str(), "%i", &count) == 1)
     	{

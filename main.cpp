@@ -15,25 +15,64 @@ void timer(int) {
         glutTimerFunc(1000/FPS, timer, 0);
 }
 
+void drawSnowMan() {
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+// Draw Body
+	glTranslatef(0.0f ,0.75f, 0.0f);
+	glutSolidSphere(0.75f,20,20);
+
+// Draw Head
+	glTranslatef(0.0f, 1.0f, 0.0f);
+	glutSolidSphere(0.25f,20,20);
+
+// Draw Eyes
+	glPushMatrix();
+	glColor3f(0.0f,0.0f,0.0f);
+	glTranslatef(0.05f, 0.10f, 0.18f);
+	glutSolidSphere(0.05f,10,10);
+	glTranslatef(-0.1f, 0.0f, 0.0f);
+	glutSolidSphere(0.05f,10,10);
+	glPopMatrix();
+
+// Draw Nose
+	glColor3f(1.0f, 0.5f , 0.5f);
+	glRotatef(0.0f,1.0f, 0.0f, 0.0f);
+	glutSolidCone(0.08f,0.5f,10,2);
+}
+
 void displayMe()
 {
-    glEnable(GL_DEPTH_TEST);
-    adjustCam();
-    // glm::mat4 model = glm::rotate(glm::mat4(1.f),glm::radians(-45.f),glm::vec3(1.f,0.f,0.f));
-    glm::mat4 model(1.f);
-    glUniform3fv(glGetUniformLocation(programID, "sunRayDirn"), 1, glm::value_ptr(sundirn));
-    glUniformMatrix4fv(glGetUniformLocation(programID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glClearColor(0.2,0.5,0.8,0.0);
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glColor4f(0.3, 0.3, 0.3, 1.0);
-    drawFloor();
-    glPopMatrix();
+	// Reset transformations
+	glLoadIdentity();
+	// Set the camera
+	gluLookAt(	camera.x, 1.0f, camera.z,
+			camera.x+lx, 1.0f,  camera.z+lz,
+			0.0f, 1.0f,  0.0f);
 
-    glutSwapBuffers();
-    if(maxFPS)
-        glutPostRedisplay();
-    //fps();
+// Draw ground
+
+	glColor3f(0.9f, 0.9f, 0.9f);
+	glBegin(GL_QUADS);
+		glVertex3f(-100.0f, 0.0f, -100.0f);
+		glVertex3f(-100.0f, 0.0f,  100.0f);
+		glVertex3f( 100.0f, 0.0f,  100.0f);
+		glVertex3f( 100.0f, 0.0f, -100.0f);
+	glEnd();
+
+// Draw 36 SnowMen
+
+	for(int i = -3; i < 3; i++)
+		for(int j=-3; j < 3; j++) {
+                     glPushMatrix();
+                     glTranslatef(i*10.0,0,j * 10.0);
+                     drawSnowMan();
+                     glPopMatrix();
+               }
+        glutSwapBuffers();
 }
 void keyboard(unsigned char c, int x, int y)
 {

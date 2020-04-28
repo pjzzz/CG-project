@@ -56,6 +56,8 @@ void Initialize_Detail()
     texture[17] = loadTextureFromFile(tex_names[5]);
     texture[35] = loadTextureFromFile(tex_names[6]);
 	
+	//Reaction array
+	
 }
 
 //render cylinder by getting the distance and angle between the passed vertices then use it to create a cylinder followed by disc at endpoints
@@ -88,4 +90,16 @@ void renderCylinder(float x1, float y1, float z1, float x2,float y2, float z2, f
 	gluQuadricOrientation(quadric,GLU_OUTSIDE);
 	gluDisk( quadric, 0.0, radius, subdivisions, 1);
 	glPopMatrix();
+}
+
+void reshape(int w, int h){
+    if(h == 0)    h = 1;
+    
+    float ratio = w * 1.0 / h;
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glViewport(0, 0, w, h);
+    gluPerspective(45.0, ratio, 0.1, 100.0);
+    glMatrixMode(GL_MODELVIEW);
 }
