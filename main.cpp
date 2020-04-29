@@ -1,271 +1,114 @@
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-//#include "Objects/Atom.cpp"
-#include "Objects/Bond.cpp"
-#include "functions.cpp"
+//#include <bits/stdc++.h>
+//#include <GL/glut.h>
+#include <GL/freeglut.h>
+#include "classes.cpp"
 
 using namespace std;
+//Floor Vertices
+float fVert[4][3] = {
+    {-50.0,6.0, -50.0},
+    {+50.0,6.0, -50.0},
+    {+50.0,6.0, +50.0},
+    {-50.0,6.0, +50.0}
+};
 
-void timer(int) {
-    // yaw+=.1;
-    glutPostRedisplay();
-    if(!maxFPS)
-        glutTimerFunc(1000/FPS, timer, 0);
-}
 
-void drawSnowMan() {
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-// Draw Body
-	glTranslatef(0.0f ,0.75f, 0.0f);
-	glutSolidSphere(0.75f,20,20);
-
-// Draw Head
-	glTranslatef(0.0f, 1.0f, 0.0f);
-	glutSolidSphere(0.25f,20,20);
-
-// Draw Eyes
-	glPushMatrix();
-	glColor3f(0.0f,0.0f,0.0f);
-	glTranslatef(0.05f, 0.10f, 0.18f);
-	glutSolidSphere(0.05f,10,10);
-	glTranslatef(-0.1f, 0.0f, 0.0f);
-	glutSolidSphere(0.05f,10,10);
-	glPopMatrix();
-
-// Draw Nose
-	glColor3f(1.0f, 0.5f , 0.5f);
-	glRotatef(0.0f,1.0f, 0.0f, 0.0f);
-	glutSolidCone(0.08f,0.5f,10,2);
-}
-
-void displayMe()
+//View Details for ModelView Matrix
+struct View
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    View(double x, double y, double z, double tx, double ty, double tz)
+    : eyeX(x), eyeY(y), eyeZ(z), targetX(tx), targetY(ty), targetZ(tz), xAngle(90), yAngle(270)
+    { }
+    double eyeX,eyeY,eyeZ,targetX,targetY,targetZ,xAngle,yAngle;
+    int width,height;
+};
 
-	// Reset transformations
-	glLoadIdentity();
-	// Set the camera
-	gluLookAt(	camera.x, 1.0f, camera.z,
-			camera.x+lx, 1.0f,  camera.z+lz,
-			0.0f, 1.0f,  0.0f);
+//Initializing View
+View view(-22, 0, 0, 0, 0, 0);
 
-// Draw ground
-
-	glColor3f(0.9f, 0.9f, 0.9f);
-	glBegin(GL_QUADS);
-		glVertex3f(-100.0f, 0.0f, -100.0f);
-		glVertex3f(-100.0f, 0.0f,  100.0f);
-		glVertex3f( 100.0f, 0.0f,  100.0f);
-		glVertex3f( 100.0f, 0.0f, -100.0f);
-	glEnd();
-
-// Draw 36 SnowMen
-
-	for(int i = -3; i < 3; i++)
-		for(int j=-3; j < 3; j++) {
-                     glPushMatrix();
-                     glTranslatef(i*10.0,0,j * 10.0);
-                     drawSnowMan();
-                     glPopMatrix();
-               }
-        glutSwapBuffers();
+//rendering flooe
+void drawFloor(){
+    glBegin(GL_QUADS);
+    glVertex3fv(fVert[0]);
+    glVertex3fv(fVert[1]);
+    glVertex3fv(fVert[2]);
+    glVertex3fv(fVert[3]);
+    glEnd();
 }
-void keyboard(unsigned char c, int x, int y)
+
+//Reaction array
+vector<Reaction> Reactions;
+
+void drawReactions(){
+    //Initialize if you want to use some other way @ashu
+    Reaction temp("Sulphonication");
+    // Reactions.emplace_back(temp);
+    // for(auto i:Reactions)
+    //     i.draw();
+    temp.draw();
+}
+
+//main display function
+void display(){
+    
+    glClearStencil(0);
+    glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT| GL_STENCIL_BUFFER_BIT);
+    glLoadIdentity();
+    
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    gluLookAt(view.eyeX, view.eyeY, view.eyeZ, view.targetX, view.targetY, view.targetZ, 0, 0,1);
+    glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
+    glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
+    glPushMatrix();
+    
+    glColor4f(0.3, 0.3, 0.3, 1.0);
+    drawFloor();
+    glPopMatrix();
+
+    glPushMatrix();
+    drawReactions();
+    glPopMatrix();
+
+    glutSwapBuffers();
+}
+
+//Called on mouse click and get the stencil index of object on which it is clicked
+// void getObj(int button, int state, int x, int y){
+//     if(state != GLUT_DOWN) return;
+    
+//     if(start ==0)
+//     {
+//         start = -1;
+//     }else
+//     {
+//         int w_height = glutGet(GLUT_WINDOW_HEIGHT);
+
+//         GLuint index;
+
+//         glReadPixels(x, w_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+//         atomInfoS = "Atomic Number : "+ to_string(index) +"\n"+AtomInfo[index];
+//     }
+//     glutPostRedisplay(); 
+// }
+int main(int argc, char** argv)
 {
-    // io.lock();
-    // translate(-origin.x,-origin.y,-origin.z);
-    switch(c)
-    {
-        case 'Q':case 'q':exit(0);
-        // case 'x':scale(1./scale_ratio,1,1);break;
-        // case 'X':scale(scale_ratio,1,1);break;
-        // case 'y':scale(1,1./scale_ratio,1);break;
-        // case 'Y':scale(1,scale_ratio,1);break;
-        // case 'z':scale(1,1,1./scale_ratio);break;
-        // case 'Z':scale(1,1,scale_ratio);break;
-        // case 'w':case 'W':reflectXZ();break;
-        // case 'e':case 'E':reflectXY();break;
-        // case 'r':case 'R':reflectYZ();break;
-        // case 'j':case 'J':Shear(-scale_ratio,0,0);break;
-        // case 'l':case 'L':Shear(scale_ratio,0,0);break;
-        // case 'i':case 'I':Shear(0,-scale_ratio,0);break;
-        // case 'k':case 'K':Shear(0,scale_ratio,0);break;
-        // case 'o':case 'O':Shear(0,0,-scale_ratio);break;
-        // case 'm':case 'M':Shear(0,0,scale_ratio);break;
-        // case ';':translate(translate_val,0,0);break;
-        // case ':':translate(-translate_val,0,0);break;
-        // case '\'':translate(0,translate_val,0);break;
-        // case '\"':translate(0,-translate_val,0);break;
-        // case '/':translate(0,0,translate_val);break;
-        // case '?':translate(0,0,-translate_val);break;
-        // case '6':rotateZ(theta);break;
-        // case '4':rotateZ(-theta);break;
-        // case '2':rotateX(theta);break;
-        // case '8':rotateX(-theta);break;
-        // case '5':rotateY(theta);break;
-        // case '0':rotateY(-theta);break;
-        // case '.':rotate(6,2,0,theta);break;
-        // case '3':rotate(6,2,0,-theta);break;
-        // case '1':reflect(6,2,0);break;
-        case 'f':case 'F':
-        fullScreen = !fullScreen;
-        if(fullScreen)
-        {
-            glutFullScreen();
-        }
-        else
-        {
-            glutPositionWindow(0,0);
-            glutReshapeWindow(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
-        }
-        break;
-        case 'h':case 'H':
-        showHelp = !showHelp;
-        break;
-        case 'u':case 'U':
-        maxFPS = !maxFPS;
-        if(!maxFPS)
-        {
-            timer(0);
-        }
-        break;
-        case ' ':
-        wireframe = !wireframe;
-        if(wireframe)
-        {
-            glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        }
-        else
-        {
-            glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        }
-        break;
-        case 'c': mouseLock = !mouseLock;
-        if(mouseLock)
-        {
-            glutSetCursor(GLUT_CURSOR_NONE);
-        }
-        else
-        {
-            glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-        }
-        break;
-        case '+':
-        scaleFac+=.1;
-        break;
-        case '-':
-        if(scaleFac>.2f)
-            scaleFac-=.1;
-        break;
-        case 'w':case 'W': camera+=scrollmult*glm::normalize(glm::vec3(dirn.x,0,dirn.z));
-        clampCam(camera);
-        break;
-        case 's':case 'S': camera-=scrollmult*glm::normalize(glm::vec3(dirn.x,0,dirn.z));
-        clampCam(camera);
-        break;
-        case 'a':case 'A': camera-=scrollmult*glm::normalize(glm::vec3(-dirn.z,0,dirn.x));
-        clampCam(camera);
-        break;
-        case 'd':case 'D': camera+=scrollmult*glm::normalize(glm::vec3(-dirn.z,0,dirn.x));
-        clampCam(camera);
-        break;
-        case 'z':case 'Z': camera.y+=scrollmult;
-        clampCam(camera);
-        break;
-        case 'x':case 'X': camera.y-=scrollmult;
-        clampCam(camera);
-        break;
-    }
-    // translate(origin.x,origin.y,origin.z);
-    // io.unlock();
-    // glutPostRedisplay();
-}
+    Initialize_Detail();
 
-void mousetoCenter()
-{
-    glutWarpPointer(centerX,centerY);
-}
+    glutInit(&argc, argv);
+    glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
+    glutInitWindowSize (1080, 700);
+    glutInitWindowPosition (50, 50);
+    glutCreateWindow ("CG-Project");
 
-void mouseFunc(int button, int state, int x, int y)
-{
-    glm::vec3 temp;
-    switch(button)
-    {
-        case 3:
-                camera+=scrollmult*dirn;
-            break; //scroll down
-        case 4:
-                camera+=-scrollmult*dirn;
-                break; //scroll up
-        case 5:
-        temp =glm::normalize(cross(up,dirn));
-            camera-=scrollmult*temp;
-        break; //scroll left
-        case 6:
-        temp =glm::normalize(cross(up,dirn));
-            camera+=scrollmult*temp;
-        break; //scroll right
-        // case GLUT_RIGHT_BUTTON:camera.z++;break;
-    }
-    clampCam(camera);
-}
-void mouseMovement(int x, int y) 
-{
-    static bool warpCall = true;
-    static float lastx = x;
-    static float lasty = y;
-    if(warpCall)
-    {
-        warpCall = false;
-        lastx = centerX;
-        lasty = centerY;
-        return;
-    }
-    lastx = (float)x - lastx;
-    lasty = (float)y - lasty;
-    float sensitivity = 0.1f;
-    lastx *= sensitivity;
-    lasty *= sensitivity;
-    yaw += lastx;
-    pitch -= lasty;
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-    if(mouseLock)
-    {
-        mousetoCenter();
-        warpCall = true;
-        x = 10;
-        y = 10;
-    }
-    lastx = (float)x;
-    lasty = (float)y;
-}
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    // drawReactions();
+    // glutMouseFunc(getObj);
+    // glutKeyboardFunc (NormalKeyHandler);
+    // glutSpecialFunc(specialKeyboard);
 
-int main(int argc, char **argv){
-
-    float val = height(10,10);
-    glutInit(&argc,argv);
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-    glutCreateWindow("kemastri");
-    glutFullScreen();
-    glutSetCursor(GLUT_CURSOR_NONE);
-    GLenum glewError = glewInit();
-    if(glewError!= GLEW_OK)
-    {
-        throw GlewInitError();
-    }
-    glutReshapeFunc(changeSize);
-    glutDisplayFunc(displayMe);
-    glutKeyboardFunc(keyboard);
-    glutMouseFunc(mouseFunc);
-    glutMotionFunc(mouseMovement);
-    glutPassiveMotionFunc(mouseMovement);
     glutMainLoop();
     return 0;
 }
