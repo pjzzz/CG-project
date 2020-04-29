@@ -16,7 +16,7 @@ float fVert[4][3] = {
 struct View
 {
     View(double x, double y, double z, double tx, double ty, double tz)
-    : eyeX(x), eyeY(y), eyeZ(z), targetX(tx), targetY(ty), targetZ(tz), xAngle(90), yAngle(270)
+    : eyeX(x), eyeY(y), eyeZ(z), targetX(tx), targetY(ty), targetZ(tz), xAngle(270), yAngle(270)
     { }
     double eyeX,eyeY,eyeZ,targetX,targetY,targetZ,xAngle,yAngle;
     int width,height;
@@ -40,11 +40,11 @@ vector<Reaction> Reactions;
 
 void drawReactions(){
     //Initialize if you want to use some other way @ashu
-    Reaction temp("Sulphonication");
+    
     // Reactions.emplace_back(temp);
     // for(auto i:Reactions)
     //     i.draw();
-    //temp.draw();
+    Reactions[0].draw();
 }
 
 //main display function
@@ -58,8 +58,8 @@ void display(){
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     gluLookAt(view.eyeX, view.eyeY, view.eyeZ, view.targetX, view.targetY, view.targetZ, 0, 0,1);
-    //glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
-    //glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
+    glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
+    glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
     glPushMatrix();
     
     glColor4f(0.3, 0.3, 0.3, 1.0);
@@ -94,6 +94,9 @@ void display(){
 int main(int argc, char** argv)
 {
     Initialize_Detail();
+
+    Reaction temp("Sulphonication");
+    Reactions.emplace_back(temp);
 
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);

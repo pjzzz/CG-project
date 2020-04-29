@@ -141,7 +141,8 @@ public:
 	{
 		string filename = "./Reactions/"+Name+"_Reactants.txt";
 		cout<<filename<<endl;
-		ifstream file(filename);
+		fstream file;
+        file.open(filename,ios::in);
 
 		string line;
 		while(getline(file,line))
@@ -155,11 +156,14 @@ public:
 	void getProducts()
 	{
 		string filename = "./Reactions/"+Name+"_Products.txt";
-		ifstream file(filename);
+        cout<<filename<<endl;
+		fstream file;
+        file.open(filename,ios::in);
 
 		string line;
 		while(getline(file,line))
 		{
+            cout<<line<<endl;
 			Molecule molecule= ParseData(line);
 			Products.emplace_back(molecule);
 		}
@@ -186,9 +190,7 @@ public:
 			Molecule mol= (*it);
 			mol.draw(molnum);
 
-			molnum++;
-			if(molnum==0 && num%2==0)
-				molnum++;
+			
 
 			if(react_count<react)
 			{
@@ -205,8 +207,12 @@ public:
                 gluDeleteQuadric(quadric);
                 react_count++;
 			}
+            molnum++;
+            if(molnum==0 && num%2==0)
+                molnum++;
 		}
 
+        molnum--;
 		glColor3d(1.0, 0.0, 0.0);
                 
         GLUquadricObj *quadric=gluNewQuadric();
@@ -219,14 +225,12 @@ public:
         renderCylinder(1.5+10*molnum,-0.25,0,2.5+10*molnum,-0.25,0,0.1,40,quadric);
         gluDeleteQuadric(quadric);
 
+        molnum++;
+
 		for(auto it = Products.begin(); it != Products.end(); it ++)
 		{
 			Molecule mol= (*it);
 			mol.draw(molnum);
-
-			molnum++;
-			if(molnum==0 && num%2==0)
-				molnum++;
 
 			if(prod_count<prod)
 			{
@@ -243,6 +247,10 @@ public:
                 gluDeleteQuadric(quadric);
                 prod_count++;
 			}
+
+            molnum++;
+            if(molnum==0 && num%2==0)
+                molnum++;
 		}
 
 	}
@@ -256,24 +264,26 @@ Molecule ParseData(string filename)
 	Molecule molecule;
     string line;
 
-    ifstream file(filename);
+    fstream file;
+    file.open(filename,ios::in);
 
     while (getline(file, line))
     {
-		string symbol;
     	int count;
     	double x,y,z;
+        char sym[20];
 
-    	if (sscanf(line.c_str(), "%s %lf %lf %lf", &symbol, &x, &y, &z) == 4)
+    	if (sscanf(line.c_str(), "%s %lf %lf %lf", sym, &x, &y, &z) == 4)
     	{
-    		cout<<line<<endl;
+    		//cout<<line<<endl;
+            string symbol=sym;
 			int atomic_num=atom_symbol[symbol];
-			printf("%d %d %d\n",x,y,z);
+			//printf("%d %d %d\n",x,y,z);
     		//yaha se kuch error aana shuru hua hai
 			Atom newAtom(atomic_num,x,y,z);
     		molecule.atoms.emplace_back(newAtom);
     	}
-    	else if(sscanf(line.c_str(), "%i", &count) == 1)
+    	else if(sscanf(line.c_str(), "%d", &count) == 1)
     	{
     		if(count>0)
     			molecule.atoms.reserve(count);
