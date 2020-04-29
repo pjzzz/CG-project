@@ -4,7 +4,7 @@
 
 
 //Loading and returning texture for the filname
-GLuint loadTextureFromFile(char *filename)
+GLuint loadTextureFromFile(const char *filename)
 {   
 	GLuint temp = 0;
 	glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -42,19 +42,27 @@ void Initialize_Detail()
 	atom_symbol.insert({"Cl",17});
 	atom_symbol.insert({"Br",35});
 
-	string tex_namestr[7]={"./textures/hydrogen.bmp","./textures/carbon.bmp","./textures/nitrogen.bmp","./textures/oxygen.bmp","./textures/sulfur.bmp","./textures/chlorine.bmp","./textures/bromine.bmp"};
-    char tex_names[7][1024];
-    for(int tex_count=0;tex_count<7;tex_count++)
-        strcpy(tex_names[tex_count],tex_namestr[tex_count].c_str());
+	//string tex_namestr[7]={"./textures/hydrogen.bmp","./textures/carbon.bmp","./textures/nitrogen.bmp","./textures/oxygen.bmp","./textures/sulfur.bmp","./textures/chlorine.bmp","./textures/bromine.bmp"};
+    //char* tex_names[7]={"./textures/hydrogen.bmp","./textures/carbon.bmp","./textures/nitrogen.bmp","./textures/oxygen.bmp","./textures/sulfur.bmp","./textures/chlorine.bmp","./textures/bromine.bmp"};
+    // for(int tex_count=0;tex_count<7;tex_count++)
+    //     strcpy(tex_names[tex_count],tex_namestr[tex_count].c_str());
+
+    const char* tex_name1="./textures/hydrogen.bmp";
+    const char* tex_name6="./textures/carbon.bmp";
+    const char* tex_name7="./textures/nitrogen.bmp";
+    const char* tex_name8="./textures/oxygen.bmp";
+    const char* tex_name16="./textures/sulfur.bmp";
+    const char* tex_name17="./textures/chlorine.bmp";
+    const char* tex_name35="./textures/bromine.bmp";
 
     //texture array
-    texture[1] = loadTextureFromFile(tex_names[0]);
-    texture[6] = loadTextureFromFile(tex_names[1]);
-    texture[7] = loadTextureFromFile(tex_names[2]);
-    texture[8] = loadTextureFromFile(tex_names[3]);
-    texture[16] = loadTextureFromFile(tex_names[4]);
-    texture[17] = loadTextureFromFile(tex_names[5]);
-    texture[35] = loadTextureFromFile(tex_names[6]);
+    texture[1] = loadTextureFromFile(tex_name1);
+    texture[6] = loadTextureFromFile(tex_name6);
+    texture[7] = loadTextureFromFile(tex_name7);
+    texture[8] = loadTextureFromFile(tex_name8);
+    texture[16] = loadTextureFromFile(tex_name16);
+    texture[17] = loadTextureFromFile(tex_name17);
+    texture[35] = loadTextureFromFile(tex_name35);
 	
 	//Reaction array
 	

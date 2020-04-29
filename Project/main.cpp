@@ -93,16 +93,18 @@ void display(){
 // }
 int main(int argc, char** argv)
 {
-    Initialize_Detail();
-
-    Reaction temp("Sulphonication");
-    Reactions.emplace_back(temp);
+    
 
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutInitWindowSize (1080, 700);
     glutInitWindowPosition (50, 50);
     glutCreateWindow ("CG-Project");
+
+    Initialize_Detail();
+
+    Reaction temp("Sulphonication");
+    Reactions.emplace_back(temp);
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
