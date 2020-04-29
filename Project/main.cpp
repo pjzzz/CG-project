@@ -11,21 +11,7 @@ float fVert[4][3] = {
     {-50.0,6.0, +50.0}
 };
 
-
-//View Details for ModelView Matrix
-struct View
-{
-    View(double x, double y, double z, double tx, double ty, double tz)
-    : eyeX(x), eyeY(y), eyeZ(z), targetX(tx), targetY(ty), targetZ(tz), xAngle(270), yAngle(270)
-    { }
-    double eyeX,eyeY,eyeZ,targetX,targetY,targetZ,xAngle,yAngle;
-    int width,height;
-};
-
-//Initializing View
-View view(-22, 0, 0, 0, 0, 0);
-
-//rendering flooe
+//rendering floor
 void drawFloor(){
     glBegin(GL_QUADS);
     glVertex3fv(fVert[0]);
@@ -56,12 +42,13 @@ void display(){
     
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
     gluLookAt(view.eyeX, view.eyeY, view.eyeZ, view.targetX, view.targetY, view.targetZ, 0, 0,1);
     glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
     glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
+    adjustCam();
     glPushMatrix();
     
+
     glColor4f(0.3, 0.3, 0.3, 1.0);
     drawFloor();
     glPopMatrix();
@@ -93,13 +80,15 @@ void display(){
 // }
 int main(int argc, char** argv)
 {
-    
+    cout<<M_PI/180.0f<<endl;
 
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutInitWindowSize (1080, 700);
     glutInitWindowPosition (50, 50);
-    glutCreateWindow ("CG-Project");
+    glutCreateWindow ("CG1-Project");
+    glutFullScreen();
+    glutSetCursor(GLUT_CURSOR_NONE);
 
     Initialize_Detail();
 
@@ -109,8 +98,13 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     //glutMouseFunc(getObj);
-    //glutKeyboardFunc (NormalKeyHandler);
+    glutKeyboardFunc (NormalKeyHandler);
     //glutSpecialFunc(specialKeyboard);
+    glutMotionFunc(mouseMovement);
+	glutPassiveMotionFunc(mouseMovement);
+
+    glEnable(GL_DEPTH_TEST);
 
     glutMainLoop();
+    return 0;
 }

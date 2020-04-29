@@ -104,10 +104,129 @@ void reshape(int w, int h){
     if(h == 0)    h = 1;
     
     float ratio = w * 1.0 / h;
-    
+	SCRW=w;
+	SCRH=h;
+	centerX=w/2;
+    centerY=max(1,h/2);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
     gluPerspective(45.0, ratio, 0.1, 100.0);
     glMatrixMode(GL_MODELVIEW);
+}
+
+// void mouseMove(int x, int y) { 	
+
+//          // this will only be true when the left button is down
+//          if (xOrigin >= 0) {
+
+// 		// update deltaAngle
+// 		deltaAngle = (x - xOrigin) * 0.001f;
+
+// 		// update camera's direction
+// 		lx = sin(angle + deltaAngle);
+// 		lz = -cos(angle + deltaAngle);
+// 	}
+// }
+
+// void mouseButton(int button, int state, int x, int y) {
+
+// 	// only start motion if the left button is pressed
+// 	if (button == GLUT_LEFT_BUTTON) {
+
+// 		// when the button is released
+// 		if (state == GLUT_UP) {
+// 			angle += deltaAngle;
+// 			xOrigin = -1;
+// 		}
+// 		else  {// state = GLUT_DOWN
+// 			xOrigin = x;
+// 		}
+// 	}
+// }
+
+void NormalKeyHandler (unsigned char key, int x, int y)
+{
+    if (key == 'w')
+    {
+		view.eyeX += 1;
+    }
+    if (key == 's')
+    {
+		view.eyeX -= 1;
+    }
+    if (key == 'a')
+    {
+		view.eyeY += 1;
+    }
+    if (key == 'd')
+    {
+        view.eyeY -= 1;
+    }
+    if (key == 'q')
+    {
+        view.eyeZ += 1;
+    }
+    if (key == 'e')
+    {
+        view.eyeZ -= 1;
+    }
+    
+    glutPostRedisplay(); 
+}
+int it=0;
+void adjustCam()
+{
+    //glm::vec3 front;
+	double fx,fy,fz;
+    fx = cos((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
+    fy = sin((M_PI/180.0)*(pitch));
+    fz = sin((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
+    //y=-z,z=y;
+    // up.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    // front.y = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    // front.z = sin(glm::radians(pitch));
+    double nf = sqrt(fx*fx+fy*fy+fz*fz);
+
+    view.targetX=view.eyeX+fx/nf;
+	view.targetY=view.eyeY+fy/nf;
+	view.targetZ=view.eyeZ+fz/nf;
+}
+
+void mouseMovement(int x, int y) 
+{
+    static bool warpCall = true;
+    static float lastx = x;
+    static float lasty = y;
+	//cout<<lastx<<" "<<lasty<<endl;
+    if(warpCall)
+    {
+        warpCall = false;
+        lastx = centerX;
+        lasty = centerY;
+        return;
+    }
+    lastx = (float)x - lastx;
+    lasty = (float)y - lasty;
+    float sensitivity = 0.1f;
+    lastx *= sensitivity;
+    lasty *= sensitivity;
+    yaw -= lasty;
+    pitch -= lastx;
+    // if (pitch > 89.0f)
+    //     pitch = 89.0f;
+    // if (pitch < -89.0f)
+    //     pitch = -89.0f;
+    // if(mouseLock)
+    // {
+    //     mousetoCenter();
+    //     warpCall = true;
+    //     x = 10;
+    //     y = 10;
+    // }
+    lastx = (float)x;
+    lasty = (float)y;
+	
+	//Check if we need really need to call glutPostDisplay again anf again or not
+	glutPostRedisplay();
 }
