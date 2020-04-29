@@ -149,27 +149,27 @@ void NormalKeyHandler (unsigned char key, int x, int y)
 {
     if (key == 'w')
     {
-		view.eyeX += 1;
+		view.eyeX += 0.3;
     }
     if (key == 's')
     {
-		view.eyeX -= 1;
+		view.eyeX -= 0.3;
     }
     if (key == 'a')
     {
-		view.eyeY += 1;
+		view.eyeY += 0.3;
     }
     if (key == 'd')
     {
-        view.eyeY -= 1;
+        view.eyeY -= 0.3;
     }
     if (key == 'q')
     {
-        view.eyeZ += 1;
+        view.eyeZ += 0.3;
     }
     if (key == 'e')
     {
-        view.eyeZ -= 1;
+        view.eyeZ -= 0.3;
     }
     
     glutPostRedisplay(); 
@@ -193,12 +193,16 @@ void adjustCam()
 	view.targetZ=view.eyeZ+fz/nf;
 }
 
+void mousetoCenter()
+{
+    glutWarpPointer(490,550);
+}
+
 void mouseMovement(int x, int y) 
 {
     static bool warpCall = true;
     static float lastx = x;
     static float lasty = y;
-	//cout<<lastx<<" "<<lasty<<endl;
     if(warpCall)
     {
         warpCall = false;
@@ -229,4 +233,25 @@ void mouseMovement(int x, int y)
 	
 	//Check if we need really need to call glutPostDisplay again anf again or not
 	glutPostRedisplay();
+}
+
+void timer(int) {
+    // yaw+=.1;
+    glutPostRedisplay();
+    if(!maxFPS)
+        glutTimerFunc(1000/FPS, timer, 0);
+}
+
+void fps()
+{
+    frame++;
+	Time=glutGet(GLUT_ELAPSED_TIME);
+    //if (Time - timebase > 1000) {
+        char s[1000];
+		sprintf(s,"KEMIStri FPS:%4.2f",
+			frame*1000.0/(Time-timebase));
+		timebase = Time;
+		frame = 0;
+        glutSetWindowTitle(s);
+	//}
 }

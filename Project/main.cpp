@@ -56,6 +56,9 @@ void display(){
     glPushMatrix();
     drawReactions();
     glPopMatrix();
+    if(maxFPS)
+        glutPostRedisplay();
+    fps();
 
     glutSwapBuffers();
 }
@@ -88,12 +91,14 @@ int main(int argc, char** argv)
     glutInitWindowPosition (50, 50);
     glutCreateWindow ("CG1-Project");
     glutFullScreen();
+    //mousetoCenter();
     glutSetCursor(GLUT_CURSOR_NONE);
 
     Initialize_Detail();
 
     Reaction temp("Sulphonication");
     Reactions.emplace_back(temp);
+    timer(0);
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
