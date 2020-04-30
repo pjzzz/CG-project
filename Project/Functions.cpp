@@ -24,24 +24,10 @@ GLuint loadTextureFromFile(const char *filename)
 	return temp;
 }
 
+//nitialize all data values in data.cpp
 void Initialize_Detail()
 {
-    fVert[0][0] = -50.0;
-    fVert[0][1] = 6.0;
-    fVert[0][2] = -50.0;
-
-    fVert[2][0] = +50.0;
-    fVert[1][1] = 6.0;
-    fVert[1][2] = -50.0;
-
-    fVert[2][0] = +50.0;
-    fVert[2][1] = 6.0;
-    fVert[2][2] = +50.0;
-
-    fVert[3][0] = -50.0;
-    fVert[3][1] = 6.0;
-    fVert[3][2] = +50.0;
-
+    //atom-details
 	atom_detail[1]={"H", 0.6, .37, "Hydrogen: \n1. It is a colourless,odourless and tasteless gas.\n2. It is the lightest gas known.\n3. It is only very slightly soluble in water.\n4. It can be liquefied under high pressure and at low temperature."};
 	atom_detail[6]={"C", 0.91, .77, "Carbon:\n1. It is a non-metallic element.\n2. It occurs both in free as well as combined state.\n3. Air also contain carbon as carbon-di-oxide.\n4. In free state it occurs as diamond,coal and graphite.\n5. Carbon forms hydrites known as hydrocarbon."};
 	atom_detail[7]={"N", 0.92, .75, "Nitrogen:\n1. It is a typical non-metal.\n2. It exists as diatomic molecule.\n3. It is highly electronegative element.\n4. The oxidation state of nitrogen varies from -3 to +5.\n5. Molecular nitrogen is called dinitrogen."};
@@ -50,6 +36,7 @@ void Initialize_Detail()
 	atom_detail[17]={"Cl", 1.55, .99, "Chlorine:\n1.)It is a non-metallic element\n2.)It is used in bleaching textile,yarn,paper,pulp\n3.)It is used in the sterilization of drinking water\n4.)It is used in the manufacture of vinyl chloride\n5.)It is used in preparing insecticides such as D.D.T. & B.H.C"};
 	atom_detail[35]={"Br", 1.45, 1.14, "Bromine:\n1.)It's atomic radius is 101.4pm\n2.)It's ionisation energy is 1142 KJ/mol\n3.)It is reddish brown in colour\n4.)It makes bromo compounds in organic chemistry\n5.)It finds use in medicine\n6.)It is a liquid with obnoxious smel"};
 	
+    //symbol-atom map
 	atom_symbol.insert({"H",1});
 	atom_symbol.insert({"C",6});
 	atom_symbol.insert({"N",7});
@@ -58,11 +45,7 @@ void Initialize_Detail()
 	atom_symbol.insert({"Cl",17});
 	atom_symbol.insert({"Br",35});
 
-	//string tex_namestr[7]={"./textures/hydrogen.bmp","./textures/carbon.bmp","./textures/nitrogen.bmp","./textures/oxygen.bmp","./textures/sulfur.bmp","./textures/chlorine.bmp","./textures/bromine.bmp"};
-    //char* tex_names[7]={"./textures/hydrogen.bmp","./textures/carbon.bmp","./textures/nitrogen.bmp","./textures/oxygen.bmp","./textures/sulfur.bmp","./textures/chlorine.bmp","./textures/bromine.bmp"};
-    // for(int tex_count=0;tex_count<7;tex_count++)
-    //     strcpy(tex_names[tex_count],tex_namestr[tex_count].c_str());
-
+    //texture image file location
     const char* tex_name1="./textures/hydrogen.bmp";
     const char* tex_name6="./textures/carbon.bmp";
     const char* tex_name7="./textures/nitrogen.bmp";
@@ -70,6 +53,9 @@ void Initialize_Detail()
     const char* tex_name16="./textures/sulfur.bmp";
     const char* tex_name17="./textures/chlorine.bmp";
     const char* tex_name35="./textures/bromine.bmp";
+    const char* floor_text_name="./textures/floor.bmp";
+    const char* wall_text_name="./textures/walls.bmp";
+    const char* roof_text_name="./textures/floor.bmp";
 
     //texture array
     texture[1] = loadTextureFromFile(tex_name1);
@@ -80,8 +66,9 @@ void Initialize_Detail()
     texture[17] = loadTextureFromFile(tex_name17);
     texture[35] = loadTextureFromFile(tex_name35);
 	
-	//Reaction array
-	
+    floortexture = loadTextureFromFile(floor_text_name);
+    walltexture = loadTextureFromFile(wall_text_name);
+    rooftexture = loadTextureFromFile(roof_text_name);
 }
 
 //render cylinder by getting the distance and angle between the passed vertices then use it to create a cylinder followed by disc at endpoints
@@ -131,36 +118,6 @@ void reshape(int w, int h){
     glMatrixMode(GL_MODELVIEW);
 }
 
-// void mouseMove(int x, int y) { 	
-
-//          // this will only be true when the left button is down
-//          if (xOrigin >= 0) {
-
-// 		// update deltaAngle
-// 		deltaAngle = (x - xOrigin) * 0.001f;
-
-// 		// update camera's direction
-// 		lx = sin(angle + deltaAngle);
-// 		lz = -cos(angle + deltaAngle);
-// 	}
-// }
-
-// void mouseButton(int button, int state, int x, int y) {
-
-// 	// only start motion if the left button is pressed
-// 	if (button == GLUT_LEFT_BUTTON) {
-
-// 		// when the button is released
-// 		if (state == GLUT_UP) {
-// 			angle += deltaAngle;
-// 			xOrigin = -1;
-// 		}
-// 		else  {// state = GLUT_DOWN
-// 			xOrigin = x;
-// 		}
-// 	}
-// }
-
 //Called on mouse click and get the stencil index of object on which it is clicked
 void getObj(int button, int state, int x, int y){
     if(state != GLUT_DOWN) return;
@@ -168,9 +125,7 @@ void getObj(int button, int state, int x, int y){
     if(!mouseMove)
     {
         int w_height = glutGet(GLUT_WINDOW_HEIGHT);
-
         GLuint index;
-
         glReadPixels(x, w_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
 
         string atomic_num = to_string(index);
@@ -188,31 +143,31 @@ void getObj(int button, int state, int x, int y){
 
 void NormalKeyHandler (unsigned char key, int x, int y)
 {
-    if (key == 'w')
+    if (key == 'w' || key == 'W')
     {
 		view.eyeX += 1;
     }
-    if (key == 's')
+    if (key == 's' || key == 'S')
     {
 		view.eyeX -= 1;
     }
-    if (key == 'a')
+    if (key == 'a'|| key == 'A')
     {
 		view.eyeY += 1;
     }
-    if (key == 'd')
+    if (key == 'd' || key == 'D')
     {
         view.eyeY -= 1;
     }
-    if (key == 'q')
+    if (key == 'q' || key == 'Q')
     {
         view.eyeZ += 1;
     }
-    if (key == 'e')
+    if (key == 'e' || key == 'E')
     {
         view.eyeZ -= 1;
     }
-    if (key == 'f')
+    if (key == 'f' || key == 'F')
     {
     	if(!fullScreen)
         {
@@ -227,7 +182,7 @@ void NormalKeyHandler (unsigned char key, int x, int y)
         }
     }
 
-    if (key == 'm')
+    if (key == 'm' || key == 'M')
     {
     	yaw=0,pitch=0;
     	view.eyeX = -22;
@@ -236,21 +191,32 @@ void NormalKeyHandler (unsigned char key, int x, int y)
 
     	mouseMove = 1- mouseMove;
     }
+
+    if (key == 'n' || key == 'N')
+    {
+        react_number= (react_number+1)%5;
+    }
+
+    if (key == 'p' || key == 'P')
+    {
+        react_number= (react_number+4)%5;
+    }
+
+    if (key == 27)
+    {
+        exit(0);
+    }
     
     glutPostRedisplay(); 
 }
 
 void adjustCam()
 {
-    //glm::vec3 front;
 	double fx,fy,fz;
     fx = cos((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
     fy = sin((M_PI/180.0)*(pitch));
     fz = sin((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
-    //y=-z,z=y;
-    // up.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    // front.y = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    // front.z = sin(glm::radians(pitch));
+
     double nf = sqrt(fx*fx+fy*fy+fz*fz);
 
     view.targetX=view.eyeX+fx/nf;
@@ -314,14 +280,14 @@ void fps()
 {
     frame++;
 	Time=glutGet(GLUT_ELAPSED_TIME);
-    //if (Time - timebase > 1000) {
+    if (Time - timebase > 1000) {
         char s[1000];
 		sprintf(s,"KEMIStri FPS:%4.2f",
 			frame*1000.0/(Time-timebase));
 		timebase = Time;
 		frame = 0;
         glutSetWindowTitle(s);
-	//}
+	}
 }
 
 //render string at passed cordinated with passed rgb value, it change the x value with every new line
@@ -349,6 +315,7 @@ void PrintString(string s,int x,int y,int r,int g, int b)
     }
 }
 
+//Prints all the strings on the screen
 void renderStrings()
 {
     glMatrixMode(GL_PROJECTION);
@@ -361,10 +328,75 @@ void renderStrings()
 
     PrintString(SelectedAtomInfo,10,130,0.0,1.0,0.0);
     PrintString(ProjectInfo,10,660,0.0,1.0,1.0);
-    PrintString(Help,700,120,1.0,1.0,0.0);
+    PrintString(Help,700,150,1.0,1.0,0.0);
 
     glMatrixMode(GL_PROJECTION); 
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+}
+
+
+//rendering floor
+void drawFloor(){
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, floortexture); 
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(fVert[0]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(fVert[1]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(fVert[2]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(fVert[3]);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+//rendering roof
+void drawRoof(){
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, rooftexture); 
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(roof[0]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(roof[1]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(roof[2]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(roof[3]);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+//rendering walls
+void drawWalls(){
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, walltexture); 
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[0][0]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[0][1]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[0][2]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[0][3]);
+
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[1][0]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[1][1]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[1][2]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[1][3]);
+
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[2][0]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[2][1]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[2][2]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[2][3]);
+
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[3][0]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[3][1]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[3][2]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[3][3]);
+
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }

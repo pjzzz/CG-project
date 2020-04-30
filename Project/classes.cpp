@@ -1,4 +1,3 @@
-//#include "Data.cpp"
 #include "Functions.cpp"
 
 using namespace std;
@@ -50,7 +49,7 @@ public:
         
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
-	    glBindTexture(GL_TEXTURE_2D, texture[atomic_no]); //getTextures
+	    glBindTexture(GL_TEXTURE_2D, texture[atomic_no]); 
         
         GLUquadric *quad;
         quad = gluNewQuadric();
@@ -134,20 +133,20 @@ class Reaction
 {
 public: 
 
-	string Name;
+	string Name,Info;
 	vector<Molecule> Reactants,Products;
 
 	void getReactants()
 	{
 		string filename = "./Reactions/"+Name+"_Reactants.txt";
-		cout<<filename<<endl;
+		//cout<<filename<<endl;
 		fstream file;
         file.open(filename,ios::in);
 
 		string line;
 		while(getline(file,line))
 		{
-			cout<<line<<endl;
+			//cout<<line<<endl;
 			Molecule molecule = ParseData(line);
 			Reactants.emplace_back(molecule);
 		}
@@ -156,22 +155,37 @@ public:
 	void getProducts()
 	{
 		string filename = "./Reactions/"+Name+"_Products.txt";
-        cout<<filename<<endl;
+        //cout<<filename<<endl;
 		fstream file;
         file.open(filename,ios::in);
 
 		string line;
 		while(getline(file,line))
 		{
-            cout<<line<<endl;
+            //cout<<line<<endl;
 			Molecule molecule= ParseData(line);
 			Products.emplace_back(molecule);
 		}
 	} 
 
+    void get_Info()
+    {
+        string filename = "./Reactions/"+Name+"_Info.txt";
+        fstream file;
+        file.open(filename,ios::in);
+
+        string line;
+        while(getline(file,line))
+        {
+            Info=Info+"\n"+line;
+        }
+    }
+
 	Reaction(string react_name)
 	{
 		Name = react_name;
+        Info = "";
+        get_Info();
 		getReactants();
 		getProducts();
 	}
@@ -194,16 +208,16 @@ public:
 
 			if(react_count<react)
 			{
-				glColor3d(0.0, 1.0, 0.0);
+				glColor3d(0.0, 0.8, 0.8);
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(1.5+10*molnum,0,0,2.5+10*molnum,0,0,0.1,40,quadric);
+                renderCylinder(3+10*molnum,0,0,4+10*molnum,0,0,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(2+10*molnum,-0.5,0,2+10*molnum,0.5,0,0.1,40,quadric);
+                renderCylinder(3.5+10*molnum,-0.5,0,3.5+10*molnum,0.5,0,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 react_count++;
 			}
@@ -213,16 +227,16 @@ public:
 		}
 
         molnum--;
-		glColor3d(1.0, 0.0, 0.0);
+		glColor3d(0.0, 0.8, 0.8);
                 
         GLUquadricObj *quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(1.5+10*molnum,0.25,0,2.5+10*molnum,0.25,0,0.1,40,quadric);
+        renderCylinder(2.5+10*molnum,0.25,0,3.5+10*molnum,0.25,0,0.1,40,quadric);
         gluDeleteQuadric(quadric);
         
         quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(1.5+10*molnum,-0.25,0,2.5+10*molnum,-0.25,0,0.1,40,quadric);
+        renderCylinder(2.5+10*molnum,-0.25,0,3.5+10*molnum,-0.25,0,0.1,40,quadric);
         gluDeleteQuadric(quadric);
 
         molnum++;
@@ -275,11 +289,8 @@ Molecule ParseData(string filename)
 
     	if (sscanf(line.c_str(), "%s %lf %lf %lf", sym, &x, &y, &z) == 4)
     	{
-    		//cout<<line<<endl;
             string symbol=sym;
 			int atomic_num=atom_symbol[symbol];
-			//printf("%d %d %d\n",x,y,z);
-    		//yaha se kuch error aana shuru hua hai
 			Atom newAtom(atomic_num,x,y,z);
     		molecule.atoms.emplace_back(newAtom);
     	}

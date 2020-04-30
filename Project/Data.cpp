@@ -15,6 +15,7 @@ struct Atom_Detail
 map<string,int> atom_symbol;
 
 GLuint texture[120];
+GLuint floortexture,walltexture,rooftexture;
 
 //View Details for ModelView Matrix
 struct View
@@ -41,14 +42,31 @@ float scrollmult=.3f;
 int fullScreen=1;
 int mouseMove=1;
 
+int react_number=0;
+
 //Floor Vertices
-float fVert[4][3];
+float fVert[4][3]= {
+    {-50.0,6.0, -20.0},
+    {+50.0,6.0, -20.0},
+    {+50.0,6.0, +80.0},
+    {-50.0,6.0, +80.0}
+};
+
+float walls[4][4][3]={
+	{{-50.0,6.0,-20},{-50.0,-18.0,-20},{-50.0,-18.0,+80.0},{-50.0,6.0,+80.0}},
+	{{+50.0,6.0,-20},{+50.0,-18.0,-20},{+50.0,-18.0,+80.0},{+50.0,6.0,+80.0}},
+	{{-50.0,6.0,-20},{-50.0,-18.0,-20},{+50.0,6.0,-20},{+50.0,-18.0,-20}},
+	{{-50.0,-18.0,+80.0},{-50.0,6.0,+80.0},{+50.0,-18.0,+80.0},{+50.0,6.0,+80.0}},
+};
+
+float roof[4][3]= {
+	{-50.0,-18.0, -20.0},
+    {+50.0,-18.0, -20.0},
+    {+50.0,-18.0, +80.0},
+    {-50.0,-18.0, +80.0}
+};
 
 string SelectedAtomInfo="---"; 
-string ProjectInfo="Chemical Reaction 3D View\nSubmitted by :- \n  Ashutosh Anshul - 170001011 \n  Prayag Jain - 170001037\nSupervised by :- \n  Dr. Somnath Dey";
-string Help="Instructions :-\nClick on atom to get it's info\nw,a,s,d: Camera Movement\nf: Toggle fullscreen\nm: Toggle mouse movement/selection";
-
-
-//atom_detail[1]={"H", 0.6, .37, "Hydrogen: \n1. It is a colourless,odourless and tasteless gas.\n2. It is the lightest gas known.\n3. It is only very slightly soluble in water.\n4. It can be liquefied under high pressure and at low temperature."};
-
+string ProjectInfo="Chemical Reaction View\nSubmitted by :- \n  Ashutosh Anshul - 170001011 \n  Prayag Jain - 170001037\nSupervised by :- \n  Dr. Somnath Dey";
+string Help="Instructions :-\nClick on atom to get it's info\nw,a,s,d,q,e: Camera Movement\nf: Toggle fullscreen\nm: Toggle mouse movement/selection\nn: Next Reaction\np: Previous Reaction\nesc: Exit";
 

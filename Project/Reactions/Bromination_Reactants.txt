@@ -1,0 +1,2 @@
+./XYZ/benzene.xyz
+./XYZ/bromine.xyz

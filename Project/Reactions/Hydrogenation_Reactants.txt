@@ -1,0 +1,2 @@
+./XYZ/benzene.xyz
+./XYZ/hydrogen.xyz

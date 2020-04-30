@@ -3,26 +3,11 @@
 #include <GL/freeglut.h>
 #include "classes.cpp"
 
-//rendering floor
-void drawFloor(){
-    glBegin(GL_QUADS);
-    glVertex3fv(fVert[0]);
-    glVertex3fv(fVert[1]);
-    glVertex3fv(fVert[2]);
-    glVertex3fv(fVert[3]);
-    glEnd();
-}
-
 //Reaction array
 vector<Reaction> Reactions;
 
 void drawReactions(){
-    //Initialize if you want to use some other way @ashu
-    
-    // Reactions.emplace_back(temp);
-    // for(auto i:Reactions)
-    //     i.draw();
-    Reactions[0].draw();
+    Reactions[react_number].draw();
 }
 
 //main display function
@@ -51,6 +36,16 @@ void display(){
     glPopMatrix();
 
     glPushMatrix();
+    glColor4f(0.3, 0.3, 0.3, 1.0);
+    drawWalls();
+    glPopMatrix();
+
+    glPushMatrix();
+    glColor4f(0.3, 0.3, 0.3, 1.0);
+    drawRoof();
+    glPopMatrix();
+
+    glPushMatrix();
     drawReactions();
     glPopMatrix();
 
@@ -72,22 +67,30 @@ int main(int argc, char** argv)
     glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutInitWindowSize (1080, 700);
     glutInitWindowPosition (0, 0);
-    glutCreateWindow ("CG1-Project");
+    glutCreateWindow ("CG-Project");
     glutFullScreen();
-    //mousetoCenter();
     
 
     Initialize_Detail();
 
-    Reaction temp("Sulphonication");
-    Reactions.emplace_back(temp);
+
+    Reaction react1("Sulphonication");
+    Reaction react2("Hydrogenation");
+    Reaction react3("Bromination");
+    Reaction react4("Simon-Craft");
+    Reaction react5("Friedel-Craft");
+    Reactions.emplace_back(react1);
+    Reactions.emplace_back(react2);
+    Reactions.emplace_back(react3);
+    Reactions.emplace_back(react4);
+    Reactions.emplace_back(react5);
+
     timer(0);
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutMouseFunc(getObj);
     glutKeyboardFunc (NormalKeyHandler);
-    //glutSpecialFunc(specialKeyboard);
     glutMotionFunc(mouseMovement);
 	glutPassiveMotionFunc(mouseMovement);
 
