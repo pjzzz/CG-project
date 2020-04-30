@@ -3,14 +3,6 @@
 #include <GL/freeglut.h>
 #include "classes.cpp"
 
-//Floor Vertices
-float fVert[4][3] = {
-    {-50.0,6.0, -50.0},
-    {+50.0,6.0, -50.0},
-    {+50.0,6.0, +50.0},
-    {-50.0,6.0, +50.0}
-};
-
 //rendering floor
 void drawFloor(){
     glBegin(GL_QUADS);
@@ -45,10 +37,15 @@ void display(){
     gluLookAt(view.eyeX, view.eyeY, view.eyeZ, view.targetX, view.targetY, view.targetZ, 0, 0,1);
     glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
     glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
-    adjustCam();
-    glPushMatrix();
-    
 
+    if(mouseMove)
+        glutSetCursor(GLUT_CURSOR_NONE);
+    else
+        glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
+
+    adjustCam();
+
+    glPushMatrix();
     glColor4f(0.3, 0.3, 0.3, 1.0);
     drawFloor();
     glPopMatrix();
@@ -56,6 +53,9 @@ void display(){
     glPushMatrix();
     drawReactions();
     glPopMatrix();
+
+    renderStrings();
+
     if(maxFPS)
         glutPostRedisplay();
     fps();
@@ -63,24 +63,7 @@ void display(){
     glutSwapBuffers();
 }
 
-//Called on mouse click and get the stencil index of object on which it is clicked
-// void getObj(int button, int state, int x, int y){
-//     if(state != GLUT_DOWN) return;
-    
-//     if(start ==0)
-//     {
-//         start = -1;
-//     }else
-//     {
-//         int w_height = glutGet(GLUT_WINDOW_HEIGHT);
 
-//         GLuint index;
-
-//         glReadPixels(x, w_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
-//         atomInfoS = "Atomic Number : "+ to_string(index) +"\n"+AtomInfo[index];
-//     }
-//     glutPostRedisplay(); 
-// }
 int main(int argc, char** argv)
 {
     cout<<M_PI/180.0f<<endl;
@@ -88,11 +71,11 @@ int main(int argc, char** argv)
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutInitWindowSize (1080, 700);
-    glutInitWindowPosition (50, 50);
+    glutInitWindowPosition (0, 0);
     glutCreateWindow ("CG1-Project");
     glutFullScreen();
     //mousetoCenter();
-    glutSetCursor(GLUT_CURSOR_NONE);
+    
 
     Initialize_Detail();
 
@@ -102,7 +85,7 @@ int main(int argc, char** argv)
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
-    //glutMouseFunc(getObj);
+    glutMouseFunc(getObj);
     glutKeyboardFunc (NormalKeyHandler);
     //glutSpecialFunc(specialKeyboard);
     glutMotionFunc(mouseMovement);

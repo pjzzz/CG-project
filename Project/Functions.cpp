@@ -26,6 +26,22 @@ GLuint loadTextureFromFile(const char *filename)
 
 void Initialize_Detail()
 {
+    fVert[0][0] = -50.0;
+    fVert[0][1] = 6.0;
+    fVert[0][2] = -50.0;
+
+    fVert[2][0] = +50.0;
+    fVert[1][1] = 6.0;
+    fVert[1][2] = -50.0;
+
+    fVert[2][0] = +50.0;
+    fVert[2][1] = 6.0;
+    fVert[2][2] = +50.0;
+
+    fVert[3][0] = -50.0;
+    fVert[3][1] = 6.0;
+    fVert[3][2] = +50.0;
+
 	atom_detail[1]={"H", 0.6, .37, "Hydrogen: \n1. It is a colourless,odourless and tasteless gas.\n2. It is the lightest gas known.\n3. It is only very slightly soluble in water.\n4. It can be liquefied under high pressure and at low temperature."};
 	atom_detail[6]={"C", 0.91, .77, "Carbon:\n1. It is a non-metallic element.\n2. It occurs both in free as well as combined state.\n3. Air also contain carbon as carbon-di-oxide.\n4. In free state it occurs as diamond,coal and graphite.\n5. Carbon forms hydrites known as hydrocarbon."};
 	atom_detail[7]={"N", 0.92, .75, "Nitrogen:\n1. It is a typical non-metal.\n2. It exists as diatomic molecule.\n3. It is highly electronegative element.\n4. The oxidation state of nitrogen varies from -3 to +5.\n5. Molecular nitrogen is called dinitrogen."};
@@ -145,36 +161,85 @@ void reshape(int w, int h){
 // 	}
 // }
 
+//Called on mouse click and get the stencil index of object on which it is clicked
+void getObj(int button, int state, int x, int y){
+    if(state != GLUT_DOWN) return;
+    
+    if(!mouseMove)
+    {
+        int w_height = glutGet(GLUT_WINDOW_HEIGHT);
+
+        GLuint index;
+
+        glReadPixels(x, w_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+
+        string atomic_num = to_string(index);
+        if(atomic_num=="0")
+            SelectedAtomInfo = "-";
+        else
+            SelectedAtomInfo = "Atomic Number : "+ to_string(index) +"\n"+atom_detail[index].info;
+    }
+
+    else
+        SelectedAtomInfo = "--";
+        
+    glutPostRedisplay(); 
+}
+
 void NormalKeyHandler (unsigned char key, int x, int y)
 {
     if (key == 'w')
     {
-		view.eyeX += 0.3;
+		view.eyeX += 1;
     }
     if (key == 's')
     {
-		view.eyeX -= 0.3;
+		view.eyeX -= 1;
     }
     if (key == 'a')
     {
-		view.eyeY += 0.3;
+		view.eyeY += 1;
     }
     if (key == 'd')
     {
-        view.eyeY -= 0.3;
+        view.eyeY -= 1;
     }
     if (key == 'q')
     {
-        view.eyeZ += 0.3;
+        view.eyeZ += 1;
     }
     if (key == 'e')
     {
-        view.eyeZ -= 0.3;
+        view.eyeZ -= 1;
+    }
+    if (key == 'f')
+    {
+    	if(!fullScreen)
+        {
+            glutFullScreen();
+            fullScreen=1;
+        }
+        else
+        {
+            glutPositionWindow(270,175);
+            glutReshapeWindow(glutGet(GLUT_SCREEN_WIDTH)/2, glutGet(GLUT_SCREEN_HEIGHT)/2);
+            fullScreen=0;
+        }
+    }
+
+    if (key == 'm')
+    {
+    	yaw=0,pitch=0;
+    	view.eyeX = -22;
+    	view.eyeY = 0;
+    	view.eyeZ = 0;
+
+    	mouseMove = 1- mouseMove;
     }
     
     glutPostRedisplay(); 
 }
-int it=0;
+
 void adjustCam()
 {
     //glm::vec3 front;
@@ -200,39 +265,42 @@ void mousetoCenter()
 
 void mouseMovement(int x, int y) 
 {
-    static bool warpCall = true;
-    static float lastx = x;
-    static float lasty = y;
-    if(warpCall)
+	if(mouseMove)
     {
-        warpCall = false;
-        lastx = centerX;
-        lasty = centerY;
-        return;
+    	static bool warpCall = true;
+        static float lastx = x;
+        static float lasty = y;
+        if(warpCall)
+        {
+            warpCall = false;
+            lastx = centerX;
+            lasty = centerY;
+            return;
+        }
+        lastx = (float)x - lastx;
+        lasty = (float)y - lasty;
+        float sensitivity = 0.1f;
+        lastx *= sensitivity;
+        lasty *= sensitivity;
+        yaw -= lasty;
+        pitch -= lastx;
+        // if (pitch > 89.0f)
+        //     pitch = 89.0f;
+        // if (pitch < -89.0f)
+        //     pitch = -89.0f;
+        // if(mouseLock)
+        // {
+        //     mousetoCenter();
+        //     warpCall = true;
+        //     x = 10;
+        //     y = 10;
+        // }
+        lastx = (float)x;
+        lasty = (float)y;
+    	
+    	//Check if we need really need to call glutPostDisplay again anf again or not
+    	glutPostRedisplay();
     }
-    lastx = (float)x - lastx;
-    lasty = (float)y - lasty;
-    float sensitivity = 0.1f;
-    lastx *= sensitivity;
-    lasty *= sensitivity;
-    yaw -= lasty;
-    pitch -= lastx;
-    // if (pitch > 89.0f)
-    //     pitch = 89.0f;
-    // if (pitch < -89.0f)
-    //     pitch = -89.0f;
-    // if(mouseLock)
-    // {
-    //     mousetoCenter();
-    //     warpCall = true;
-    //     x = 10;
-    //     y = 10;
-    // }
-    lastx = (float)x;
-    lasty = (float)y;
-	
-	//Check if we need really need to call glutPostDisplay again anf again or not
-	glutPostRedisplay();
 }
 
 void timer(int) {
@@ -254,4 +322,49 @@ void fps()
 		frame = 0;
         glutSetWindowTitle(s);
 	//}
+}
+
+//render string at passed cordinated with passed rgb value, it change the x value with every new line
+void PrintString(string s,int x,int y,int r,int g, int b)
+{
+    void* font = GLUT_BITMAP_9_BY_15;
+    int next_line =0;
+
+    glRasterPos2i(x, y);
+
+    int len= s.length();
+    for (int i=0;i<len;i++)
+    {
+        char c = s[i];
+        if(c=='\n')
+        {
+            next_line+=20;
+            glRasterPos2i(x, y-next_line);
+        }
+        else
+        {
+            glColor3d(r, g, b);
+            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+        }
+    }
+}
+
+void renderStrings()
+{
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0.0, 1080, 0.0, 700);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    PrintString(SelectedAtomInfo,10,130,0.0,1.0,0.0);
+    PrintString(ProjectInfo,10,660,0.0,1.0,1.0);
+    PrintString(Help,700,120,1.0,1.0,0.0);
+
+    glMatrixMode(GL_PROJECTION); 
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
