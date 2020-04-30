@@ -313,7 +313,7 @@ Molecule ParseData(string filename)
     {
         Atom atom = (*it);
         
-        for (auto j = molecule.atoms.begin(); j != molecule.atoms.end(); j ++)
+        for (auto j = it+1; j != molecule.atoms.end(); j ++)
         {
             Atom other = (*j);
 
