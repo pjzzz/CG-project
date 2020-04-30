@@ -49,7 +49,7 @@ void display(){
     drawReactions();
     glPopMatrix();
 
-    renderStrings();
+    renderStrings(Reactions[react_number].Name,Reactions[react_number].Info);
 
     if(maxFPS)
         glutPostRedisplay();
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     Reaction react1("Sulphonication");
     Reaction react2("Hydrogenation");
     Reaction react3("Bromination");
-    Reaction react4("Simon-Craft");
+    Reaction react4("Simmon-Smith");
     Reaction react5("Friedel-Craft");
     Reactions.emplace_back(react1);
     Reactions.emplace_back(react2);

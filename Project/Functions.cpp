@@ -316,7 +316,7 @@ void PrintString(string s,int x,int y,int r,int g, int b)
 }
 
 //Prints all the strings on the screen
-void renderStrings()
+void renderStrings(string reactionName,string reactionInfo)
 {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -329,6 +329,8 @@ void renderStrings()
     PrintString(SelectedAtomInfo,10,130,0.0,1.0,0.0);
     PrintString(ProjectInfo,10,660,0.0,1.0,1.0);
     PrintString(Help,700,150,1.0,1.0,0.0);
+    PrintString(reactionName+" Reaction\n"+reactionInfo,750,660,0.0,1.0,1.0);
+    
 
     glMatrixMode(GL_PROJECTION); 
     glPopMatrix();

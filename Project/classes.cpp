@@ -173,10 +173,9 @@ public:
         string filename = "./Reactions/"+Name+"_Info.txt";
         fstream file;
         file.open(filename,ios::in);
-
         string line;
         while(getline(file,line))
-        {
+        {   
             Info=Info+"\n"+line;
         }
     }
