@@ -25,11 +25,13 @@ public:
         z = atom_copy.z;
     }
 
-    double DistanceSquared(Atom other) //Distance between the current atom and the atom which is passed 
+    //Distance between the current atom and the atom which is passed
+    double DistanceSquared(Atom other)  
     {
         return (x-other.x)*(x-other.x)+(y-other.y)*(y-other.y)+(z-other.z)*(z-other.z);
     }
 
+    //return true if two atoms can bond otherwise false
     bool can_bond(Atom other)
     {
     	double distance = DistanceSquared(other);
@@ -41,6 +43,7 @@ public:
         return false;
     }
 
+    //renders current atom in scene
     void draw(int molnum)
     {
     	float radius = atom_detail[atomic_no].radius;
@@ -81,6 +84,7 @@ class Bond
             atom2.z = b.z;
 		}
 
+        //renders current bond in scene
 		void draw(int molnum)
 		{
 			glStencilFunc(GL_ALWAYS, 0, -1);
@@ -111,6 +115,7 @@ public:
             bonds.push_back(molecule_copy.bonds[i]);
     }
 
+    //renders current molecule in scene
 	void draw(int molnum)
 	{
 		for(auto it = atoms.begin(); it != atoms.end(); it ++)
@@ -127,6 +132,7 @@ public:
 	}
 };
 
+//creates required molecules by parsing data from necessary files
 Molecule ParseData(string filename);
 
 class Reaction
@@ -136,6 +142,7 @@ public:
 	string Name,Info;
 	vector<Molecule> Reactants,Products;
 
+    //gets reactants for the given reaction
 	void getReactants()
 	{
 		string filename = "./Reactions/"+Name+"_Reactants.txt";
@@ -152,6 +159,7 @@ public:
 		}
 	}
 
+    //gets products for the reaction
 	void getProducts()
 	{
 		string filename = "./Reactions/"+Name+"_Products.txt";
@@ -189,6 +197,7 @@ public:
 		getProducts();
 	}
 
+    //renders current reaction in scene
 	void draw()
 	{
 		int react = Reactants.size(),prod= Products.size();

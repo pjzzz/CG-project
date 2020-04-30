@@ -103,6 +103,7 @@ void renderCylinder(float x1, float y1, float z1, float x2,float y2, float z2, f
 	glPopMatrix();
 }
 
+//uppdating variables as we resize/change the size of the window
 void reshape(int w, int h){
     if(h == 0)    h = 1;
     
@@ -141,31 +142,33 @@ void getObj(int button, int state, int x, int y){
     glutPostRedisplay(); 
 }
 
+
+//keyboard callback function implementing change in scene when pressing certain keys
 void NormalKeyHandler (unsigned char key, int x, int y)
 {
     if (key == 'w' || key == 'W')
     {
-		view.eyeX += 1;
+		view.eyeX += 0.3;
     }
     if (key == 's' || key == 'S')
     {
-		view.eyeX -= 1;
+		view.eyeX -= 0.3;
     }
     if (key == 'a'|| key == 'A')
     {
-		view.eyeY += 1;
+		view.eyeY += 0.3;
     }
     if (key == 'd' || key == 'D')
     {
-        view.eyeY -= 1;
+        view.eyeY -= 0.3;
     }
     if (key == 'q' || key == 'Q')
     {
-        view.eyeZ += 1;
+        view.eyeZ += 0.3;
     }
     if (key == 'e' || key == 'E')
     {
-        view.eyeZ -= 1;
+        view.eyeZ -= 0.3;
     }
     if (key == 'f' || key == 'F')
     {
@@ -210,6 +213,8 @@ void NormalKeyHandler (unsigned char key, int x, int y)
     glutPostRedisplay(); 
 }
 
+
+//calculating current target or diretion where the mouse of aiming at
 void adjustCam()
 {
 	double fx,fy,fz;
@@ -229,6 +234,7 @@ void mousetoCenter()
     glutWarpPointer(490,550);
 }
 
+//mouse callback function to change view as we move mouse
 void mouseMovement(int x, int y) 
 {
 	if(mouseMove)
@@ -276,6 +282,7 @@ void timer(int) {
         glutTimerFunc(1000/FPS, timer, 0);
 }
 
+//Calculating frames per second and displaying in window title bar
 void fps()
 {
     frame++;

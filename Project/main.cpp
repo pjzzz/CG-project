@@ -61,7 +61,6 @@ void display(){
 
 int main(int argc, char** argv)
 {
-    cout<<M_PI/180.0f<<endl;
 
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
