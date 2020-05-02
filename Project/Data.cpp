@@ -35,15 +35,16 @@ const int FPS = 120;
 int frame = 0, Time = 0, timebase=0;
 float SCRW=1080,centerX;
 float SCRH=700,centerY;
+double fx,fy,fz;
 float pitch= 0.f,yaw=0.f;
-float scrollmult=.3f;
+float mult=1.0f;
 
 
 int fullScreen=1;
 int mouseMove=1;
 
 int react_number=0;
-
+int total_reactions=5;
 //Floor Vertices
 float fVert[4][3]= {
     {-50.0,6.0, -20.0},

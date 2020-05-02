@@ -29,7 +29,7 @@ void display(){
         glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
 
     adjustCam();
-
+    
     glPushMatrix();
     glColor4f(0.3, 0.3, 0.3, 1.0);
     drawFloor();
@@ -48,6 +48,8 @@ void display(){
     glPushMatrix();
     drawReactions();
     glPopMatrix();
+
+    glMatrixMode(GL_PROJECTION);
 
     renderStrings(Reactions[react_number].Name,Reactions[react_number].Info);
 
@@ -90,8 +92,9 @@ int main(int argc, char** argv)
     glutReshapeFunc(reshape);
     glutMouseFunc(getObj);
     glutKeyboardFunc (NormalKeyHandler);
-    glutMotionFunc(mouseMovement);
+    //glutMotionFunc(mouseMovement);
 	glutPassiveMotionFunc(mouseMovement);
+    mousetoCenter();
 
     glEnable(GL_DEPTH_TEST);
 

@@ -2,6 +2,10 @@
 #include "lib/RgbImage.cpp"
 #include "lib/RgbImage.h"
 
+vector<double> normalize(double x,double y,double z){
+    double nf=sqrt(x*x+y*y+z*z);
+    return {x/nf,y/nf,z/nf};
+}
 
 //Loading and returning texture for the filname
 GLuint loadTextureFromFile(const char *filename)
@@ -142,33 +146,40 @@ void getObj(int button, int state, int x, int y){
     glutPostRedisplay(); 
 }
 
-
 //keyboard callback function implementing change in scene when pressing certain keys
 void NormalKeyHandler (unsigned char key, int x, int y)
 {
     if (key == 'w' || key == 'W')
     {
-		view.eyeX += 0.3;
+        auto ch = normalize(fx,fy,0);
+		view.eyeX += mult*ch[0];
+        view.eyeY += mult*ch[1];
     }
     if (key == 's' || key == 'S')
     {
-		view.eyeX -= 0.3;
+        auto ch = normalize(fx,fy,0);
+		view.eyeX -= mult*ch[0];
+        view.eyeY -= mult*ch[1];
     }
     if (key == 'a'|| key == 'A')
     {
-		view.eyeY += 0.3;
+        auto ch = normalize(-fy,fx,0);
+		view.eyeX += mult*ch[0];
+        view.eyeY += mult*ch[1];
     }
     if (key == 'd' || key == 'D')
     {
-        view.eyeY -= 0.3;
+        auto ch = normalize(-fy,fx,0);
+        view.eyeX -= mult*ch[0];
+        view.eyeY -= mult*ch[1];
     }
     if (key == 'q' || key == 'Q')
     {
-        view.eyeZ += 0.3;
+        view.eyeZ += mult;
     }
     if (key == 'e' || key == 'E')
     {
-        view.eyeZ -= 0.3;
+        view.eyeZ -= mult;
     }
     if (key == 'f' || key == 'F')
     {
@@ -197,12 +208,12 @@ void NormalKeyHandler (unsigned char key, int x, int y)
 
     if (key == 'n' || key == 'N')
     {
-        react_number= (react_number+1)%5;
+        react_number= (react_number+1)%total_reactions;
     }
 
     if (key == 'p' || key == 'P')
     {
-        react_number= (react_number+4)%5;
+        react_number= (react_number-1 + total_reactions)%total_reactions;
     }
 
     if (key == 27)
@@ -213,14 +224,13 @@ void NormalKeyHandler (unsigned char key, int x, int y)
     glutPostRedisplay(); 
 }
 
-
 //calculating current target or diretion where the mouse of aiming at
 void adjustCam()
 {
-	double fx,fy,fz;
+    //i think fully rotate bhi yaha kuch karan se nahi ho pa rahe
     fx = cos((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
-    fy = sin((M_PI/180.0)*(pitch));
-    fz = sin((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
+    fz = sin((M_PI/180.0)*(pitch));
+    fy = sin((M_PI/180.0)*(yaw)) * cos((M_PI/180.0)*(pitch));
 
     double nf = sqrt(fx*fx+fy*fy+fz*fz);
 
@@ -231,7 +241,7 @@ void adjustCam()
 
 void mousetoCenter()
 {
-    glutWarpPointer(490,550);
+    glutWarpPointer(centerY,centerX);
 }
 
 //mouse callback function to change view as we move mouse
@@ -251,15 +261,15 @@ void mouseMovement(int x, int y)
         }
         lastx = (float)x - lastx;
         lasty = (float)y - lasty;
-        float sensitivity = 0.1f;
+        float sensitivity = 0.5f;
         lastx *= sensitivity;
         lasty *= sensitivity;
-        yaw -= lasty;
-        pitch -= lastx;
-        // if (pitch > 89.0f)
-        //     pitch = 89.0f;
-        // if (pitch < -89.0f)
-        //     pitch = -89.0f;
+        yaw -= lastx;
+        pitch -= lasty;
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
         // if(mouseLock)
         // {
         //     mousetoCenter();
@@ -325,7 +335,6 @@ void PrintString(string s,int x,int y,int r,int g, int b)
 //Prints all the strings on the screen
 void renderStrings(string reactionName,string reactionInfo)
 {
-    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
     gluOrtho2D(0.0, 1080, 0.0, 700);
