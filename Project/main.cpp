@@ -8,6 +8,9 @@ vector<Reaction> Reactions;
 
 void drawReactions(){
     Reactions[react_number].draw();
+    //Reactions[(react_number+1)%total_reactions].draw(2);
+    Reactions[(react_number+2)%total_reactions].draw(0,3);
+    //Reactions[(react_number+3)%total_reactions].draw(0,0,4);
 }
 
 //main display function

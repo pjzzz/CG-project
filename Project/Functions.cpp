@@ -261,7 +261,7 @@ void mouseMovement(int x, int y)
         }
         lastx = (float)x - lastx;
         lasty = (float)y - lasty;
-        float sensitivity = 0.5f;
+        float sensitivity = 0.3f;
         lastx *= sensitivity;
         lasty *= sensitivity;
         yaw -= lastx;

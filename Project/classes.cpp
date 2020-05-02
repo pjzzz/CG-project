@@ -44,7 +44,7 @@ public:
     }
 
     //renders current atom in scene
-    void draw(int molnum)
+    void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
     {
     	float radius = atom_detail[atomic_no].radius;
 		glStencilFunc(GL_ALWAYS,atomic_no, -1);
@@ -57,7 +57,7 @@ public:
         GLUquadric *quad;
         quad = gluNewQuadric();
         gluQuadricTexture(quad, 40);
-        glTranslatef(x+(10*molnum),y,z);
+        glTranslatef(x+(10*shiftX),y+10*shiftY,z+10*shiftZ);
         gluSphere(quad, radius*Atom_Size, 100, 100);
         
         glDisable(GL_TEXTURE_2D);
@@ -85,13 +85,13 @@ class Bond
 		}
 
         //renders current bond in scene
-		void draw(int molnum)
+		void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
 		{
 			glStencilFunc(GL_ALWAYS, 0, -1);
                 
             GLUquadricObj *quadric=gluNewQuadric();
             gluQuadricNormals(quadric, GLU_SMOOTH);
-            renderCylinder(atom1.x+(10*molnum),atom1.y,atom1.z,atom2.x+(10*molnum),atom2.y,atom2.z,0.1,40,quadric);   
+            renderCylinder(atom1.x+(10*shiftX),atom1.y+10*shiftY,atom1.z+10*shiftZ,atom2.x+(10*shiftX),atom2.y+10*shiftY,atom2.z+10*shiftZ,0.1,40,quadric);   
             gluDeleteQuadric(quadric);
 		}
 };
@@ -116,18 +116,18 @@ public:
     }
 
     //renders current molecule in scene
-	void draw(int molnum)
+	void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
 	{
 		for(auto it = atoms.begin(); it != atoms.end(); it ++)
 		{
 			Atom atom= (*it);
-			atom.draw(molnum);
+			atom.draw(shiftX,shiftY,shiftZ);
 		}
 
 		for(auto it = bonds.begin(); it != bonds.end(); ++it)
 		{
 			Bond bond= (*it);
-			bond.draw(molnum);
+			bond.draw(shiftX,shiftY,shiftZ);
 		}
 	}
 };
@@ -198,7 +198,7 @@ public:
 	}
 
     //renders current reaction in scene
-	void draw()
+	void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
 	{
 		int react = Reactants.size(),prod= Products.size();
 		int num = (react+prod),half=num/2;
@@ -210,7 +210,7 @@ public:
 		for(auto it = Reactants.begin(); it != Reactants.end(); it ++)
 		{
 			Molecule mol= (*it);
-			mol.draw(molnum);
+			mol.draw(shiftX+molnum,shiftY,shiftZ);
 
 			
 
@@ -220,12 +220,12 @@ public:
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(3+10*molnum,0,0,4+10*molnum,0,0,0.1,40,quadric);
+                renderCylinder(3+10*(molnum+shiftX),0,0,4+10*(molnum+shiftX),0,0,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(3.5+10*molnum,-0.5,0,3.5+10*molnum,0.5,0,0.1,40,quadric);
+                renderCylinder(3.5+10*(molnum+shiftX),-0.5,0,3.5+10*(molnum+shiftX),0.5,0,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 react_count++;
 			}
@@ -239,12 +239,12 @@ public:
                 
         GLUquadricObj *quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(2.5+10*molnum,0.25,0,3.5+10*molnum,0.25,0,0.1,40,quadric);
+        renderCylinder(2.5+10*(molnum+shiftX),0.25+shiftY,0+shiftZ,3.5+10*(molnum+shiftX),0.25+shiftY,0+shiftZ,0.1,40,quadric);
         gluDeleteQuadric(quadric);
         
         quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(2.5+10*molnum,-0.25,0,3.5+10*molnum,-0.25,0,0.1,40,quadric);
+        renderCylinder(2.5+10*(molnum+shiftX),-0.25+shiftY,0+shiftZ,3.5+10*(molnum+shiftX),-0.25+shiftY,0+shiftZ,0.1,40,quadric);
         gluDeleteQuadric(quadric);
 
         molnum++;
@@ -252,7 +252,7 @@ public:
 		for(auto it = Products.begin(); it != Products.end(); it ++)
 		{
 			Molecule mol= (*it);
-			mol.draw(molnum);
+			mol.draw(molnum+shiftX);
 
 			if(prod_count<prod)
 			{
@@ -260,12 +260,12 @@ public:
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(1.5+10*molnum,0,0,2.5+10*molnum,0,0,0.1,40,quadric);
+                renderCylinder(1.5+10*(molnum+shiftX),0+shiftY,0+shiftZ,2.5+10*(molnum+shiftX),0+shiftY,0+shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(2+10*molnum,-0.5,0,2+10*molnum,0.5,0,0.1,40,quadric);
+                renderCylinder(2+10*(molnum+shiftX),-0.5+shiftY,0+shiftZ,2+10*(molnum+shiftX),0.5+shiftY,0+shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 prod_count++;
 			}
