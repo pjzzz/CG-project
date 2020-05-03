@@ -1,4 +1,3 @@
-//#include "Data.cpp"
 #include "Functions.cpp"
 
 using namespace std;
@@ -26,11 +25,13 @@ public:
         z = atom_copy.z;
     }
 
-    double DistanceSquared(Atom other) //Distance between the current atom and the atom which is passed 
+    //Distance between the current atom and the atom which is passed
+    double DistanceSquared(Atom other)  
     {
         return (x-other.x)*(x-other.x)+(y-other.y)*(y-other.y)+(z-other.z)*(z-other.z);
     }
 
+    //return true if two atoms can bond otherwise false
     bool can_bond(Atom other)
     {
     	double distance = DistanceSquared(other);
@@ -42,7 +43,8 @@ public:
         return false;
     }
 
-    void draw(int molnum)
+    //renders current atom in scene
+    void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
     {
     	float radius = atom_detail[atomic_no].radius;
 		glStencilFunc(GL_ALWAYS,atomic_no, -1);
@@ -50,12 +52,12 @@ public:
         
         glPushMatrix();
         glEnable(GL_TEXTURE_2D);
-	    glBindTexture(GL_TEXTURE_2D, texture[atomic_no]); //getTextures
+	    glBindTexture(GL_TEXTURE_2D, texture[atomic_no]); 
         
         GLUquadric *quad;
         quad = gluNewQuadric();
         gluQuadricTexture(quad, 40);
-        glTranslatef(x+(10*molnum),y,z);
+        glTranslatef(x+(10*shiftX),y+10*shiftY,z+10*shiftZ);
         gluSphere(quad, radius*Atom_Size, 100, 100);
         
         glDisable(GL_TEXTURE_2D);
@@ -82,13 +84,14 @@ class Bond
             atom2.z = b.z;
 		}
 
-		void draw(int molnum)
+        //renders current bond in scene
+		void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
 		{
 			glStencilFunc(GL_ALWAYS, 0, -1);
                 
             GLUquadricObj *quadric=gluNewQuadric();
             gluQuadricNormals(quadric, GLU_SMOOTH);
-            renderCylinder(atom1.x+(10*molnum),atom1.y,atom1.z,atom2.x+(10*molnum),atom2.y,atom2.z,0.1,40,quadric);   
+            renderCylinder(atom1.x+(10*shiftX),atom1.y+10*shiftY,atom1.z+10*shiftZ,atom2.x+(10*shiftX),atom2.y+10*shiftY,atom2.z+10*shiftZ,0.1,40,quadric);   
             gluDeleteQuadric(quadric);
 		}
 };
@@ -99,8 +102,8 @@ public:
 	vector<Atom> atoms;
 	vector<Bond> bonds;
 
-    Molecule(){
-	}
+    Molecule(){}
+
     Molecule(const Molecule &molecule_copy)
     {
         int atom_size = molecule_copy.atoms.size();
@@ -112,65 +115,90 @@ public:
             bonds.push_back(molecule_copy.bonds[i]);
     }
 
-	void draw(int molnum)
+    //renders current molecule in scene
+	void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
 	{
 		for(auto it = atoms.begin(); it != atoms.end(); it ++)
 		{
 			Atom atom= (*it);
-			atom.draw(molnum);
+			atom.draw(shiftX,shiftY,shiftZ);
 		}
 
 		for(auto it = bonds.begin(); it != bonds.end(); ++it)
 		{
 			Bond bond= (*it);
-			bond.draw(molnum);
+			bond.draw(shiftX,shiftY,shiftZ);
 		}
 	}
 };
 
+//creates required molecules by parsing data from necessary files
 Molecule ParseData(string filename);
 
 class Reaction
 {
 public: 
 
-	string Name;
+	string Name,Info;
 	vector<Molecule> Reactants,Products;
 
+    //gets reactants for the given reaction
 	void getReactants()
 	{
 		string filename = "./Reactions/"+Name+"_Reactants.txt";
-		ifstream file(filename);
+		//cout<<filename<<endl;
+		fstream file;
+        file.open(filename,ios::in);
 
 		string line;
 		while(getline(file,line))
 		{
+			//cout<<line<<endl;
 			Molecule molecule = ParseData(line);
 			Reactants.emplace_back(molecule);
 		}
 	}
 
+    //gets products for the reaction
 	void getProducts()
 	{
 		string filename = "./Reactions/"+Name+"_Products.txt";
-		ifstream file(filename);
+        //cout<<filename<<endl;
+		fstream file;
+        file.open(filename,ios::in);
 
 		string line;
 		while(getline(file,line))
 		{
+            //cout<<line<<endl;
 			Molecule molecule= ParseData(line);
 			Products.emplace_back(molecule);
 		}
 	} 
 
+    void get_Info()
+    {
+        string filename = "./Reactions/"+Name+"_Info.txt";
+        fstream file;
+        file.open(filename,ios::in);
+        string line;
+        while(getline(file,line))
+        {   
+            Info=Info+"\n"+line;
+        }
+    }
+
 	Reaction(string react_name)
 	{
 		Name = react_name;
+        Info = "";
+        get_Info();
 		getReactants();
 		getProducts();
 	}
 
-	void draw()
+    //renders current reaction in scene
+	void draw(float shiftX=0,float shiftY=0,float shiftZ=0)
 	{
 		int react = Reactants.size(),prod= Products.size();
 		int num = (react+prod),half=num/2;
@@ -182,49 +210,49 @@ public:
 		for(auto it = Reactants.begin(); it != Reactants.end(); it ++)
 		{
 			Molecule mol= (*it);
-			mol.draw(molnum);
+			mol.draw(shiftX+molnum,shiftY,shiftZ);
 
-			molnum++;
-			if(molnum==0 && num%2==0)
-				molnum++;
+			
 
 			if(react_count<react)
 			{
-				glColor3d(0.0, 1.0, 0.0);
+				glColor3d(0.0, 0.8, 0.8);
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(1.5+10*molnum,0,0,2.5+10*molnum,0,0,0.1,40,quadric);
+                renderCylinder(3+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,4+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(2+10*molnum,-0.5,0,2+10*molnum,0.5,0,0.1,40,quadric);
+                renderCylinder(3.5+10*(molnum+shiftX),-0.5+10*shiftY,0+10*shiftZ,3.5+10*(molnum+shiftX),0.5+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 react_count++;
 			}
+            molnum++;
+            if(molnum==0 && num%2==0)
+                molnum++;
 		}
 
-		glColor3d(1.0, 0.0, 0.0);
+        molnum--;
+		glColor3d(0.0, 0.8, 0.8);
                 
         GLUquadricObj *quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(1.5+10*molnum,0.25,0,2.5+10*molnum,0.25,0,0.1,40,quadric);
+        renderCylinder(2.5+10*(molnum+shiftX),0.25+10*shiftY,0+10*shiftZ,3.5+10*(molnum+shiftX),0.25+10*shiftY,0+10*shiftZ,0.1,40,quadric);
         gluDeleteQuadric(quadric);
         
         quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(1.5+10*molnum,-0.25,0,2.5+10*molnum,-0.25,0,0.1,40,quadric);
+        renderCylinder(2.5+10*(molnum+shiftX),-0.25+10*shiftY,0+10*shiftZ,3.5+10*(molnum+shiftX),-0.25+10*shiftY,0+10*shiftZ,0.1,40,quadric);
         gluDeleteQuadric(quadric);
+
+        molnum++;
 
 		for(auto it = Products.begin(); it != Products.end(); it ++)
 		{
 			Molecule mol= (*it);
-			mol.draw(molnum);
-
-			molnum++;
-			if(molnum==0 && num%2==0)
-				molnum++;
+			mol.draw(molnum+shiftX,shiftY,shiftZ);
 
 			if(prod_count<prod)
 			{
@@ -232,15 +260,19 @@ public:
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(1.5+10*molnum,0,0,2.5+10*molnum,0,0,0.1,40,quadric);
+                renderCylinder(1.5+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,2.5+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(2+10*molnum,-0.5,0,2+10*molnum,0.5,0,0.1,40,quadric);
+                renderCylinder(2+10*(molnum+shiftX),-0.5+10*shiftY,0+10*shiftZ,2+10*(molnum+shiftX),0.5+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 prod_count++;
 			}
+
+            molnum++;
+            if(molnum==0 && num%2==0)
+                molnum++;
 		}
 
 	}
@@ -255,34 +287,33 @@ Molecule ParseData(string filename)
     string line;
 
     fstream file;
-	file.open(filename,ios::in);
+    file.open(filename,ios::in);
 
-    while (file)
+    while (getline(file, line))
     {
-		char symbol[64];
     	int count;
     	double x,y,z;
-		getline(file, line);
-    	if (sscanf(line.c_str(), "%s %lf %lf %lf", &symbol, &x, &y, &z) == 4)
+        char sym[20];
+
+    	if (sscanf(line.c_str(), "%s %lf %lf %lf", sym, &x, &y, &z) == 4)
     	{
-    		int atomic_num=atom_symbol[symbol];
+            string symbol=sym;
+			int atomic_num=atom_symbol[symbol];
 			Atom newAtom(atomic_num,x,y,z);
     		molecule.atoms.emplace_back(newAtom);
     	}
-    	else if(sscanf(line.c_str(), "%i", &count) == 1)
+    	else if(sscanf(line.c_str(), "%d", &count) == 1)
     	{
     		if(count>0)
     			molecule.atoms.reserve(count);
     	}
     }
-	
-	file.close();
 
     for (auto it = molecule.atoms.begin(); it != molecule.atoms.end(); it ++)
     {
         Atom atom = (*it);
         
-        for (auto j = molecule.atoms.begin(); j != molecule.atoms.end(); j ++)
+        for (auto j = it+1; j != molecule.atoms.end(); j ++)
         {
             Atom other = (*j);
 
