@@ -220,12 +220,12 @@ public:
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(3+10*(molnum+shiftX),0,0,4+10*(molnum+shiftX),0,0,0.1,40,quadric);
+                renderCylinder(3+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,4+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(3.5+10*(molnum+shiftX),-0.5,0,3.5+10*(molnum+shiftX),0.5,0,0.1,40,quadric);
+                renderCylinder(3.5+10*(molnum+shiftX),-0.5+10*shiftY,0+10*shiftZ,3.5+10*(molnum+shiftX),0.5+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 react_count++;
 			}
@@ -239,12 +239,12 @@ public:
                 
         GLUquadricObj *quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(2.5+10*(molnum+shiftX),0.25+shiftY,0+shiftZ,3.5+10*(molnum+shiftX),0.25+shiftY,0+shiftZ,0.1,40,quadric);
+        renderCylinder(2.5+10*(molnum+shiftX),0.25+10*shiftY,0+10*shiftZ,3.5+10*(molnum+shiftX),0.25+10*shiftY,0+10*shiftZ,0.1,40,quadric);
         gluDeleteQuadric(quadric);
         
         quadric=gluNewQuadric();
         gluQuadricNormals(quadric, GLU_SMOOTH);
-        renderCylinder(2.5+10*(molnum+shiftX),-0.25+shiftY,0+shiftZ,3.5+10*(molnum+shiftX),-0.25+shiftY,0+shiftZ,0.1,40,quadric);
+        renderCylinder(2.5+10*(molnum+shiftX),-0.25+10*shiftY,0+10*shiftZ,3.5+10*(molnum+shiftX),-0.25+10*shiftY,0+10*shiftZ,0.1,40,quadric);
         gluDeleteQuadric(quadric);
 
         molnum++;
@@ -252,7 +252,7 @@ public:
 		for(auto it = Products.begin(); it != Products.end(); it ++)
 		{
 			Molecule mol= (*it);
-			mol.draw(molnum+shiftX);
+			mol.draw(molnum+shiftX,shiftY,shiftZ);
 
 			if(prod_count<prod)
 			{
@@ -260,12 +260,12 @@ public:
                 
                 GLUquadricObj *quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(1.5+10*(molnum+shiftX),0+shiftY,0+shiftZ,2.5+10*(molnum+shiftX),0+shiftY,0+shiftZ,0.1,40,quadric);
+                renderCylinder(1.5+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,2.5+10*(molnum+shiftX),0+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 
                 quadric=gluNewQuadric();
                 gluQuadricNormals(quadric, GLU_SMOOTH);
-                renderCylinder(2+10*(molnum+shiftX),-0.5+shiftY,0+shiftZ,2+10*(molnum+shiftX),0.5+shiftY,0+shiftZ,0.1,40,quadric);
+                renderCylinder(2+10*(molnum+shiftX),-0.5+10*shiftY,0+10*shiftZ,2+10*(molnum+shiftX),0.5+10*shiftY,0+10*shiftZ,0.1,40,quadric);
                 gluDeleteQuadric(quadric);
                 prod_count++;
 			}

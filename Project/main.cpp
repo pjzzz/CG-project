@@ -8,9 +8,10 @@ vector<Reaction> Reactions;
 
 void drawReactions(){
     Reactions[react_number].draw();
-    //Reactions[(react_number+1)%total_reactions].draw(2);
-    Reactions[(react_number+2)%total_reactions].draw(0,3);
-    //Reactions[(react_number+3)%total_reactions].draw(0,0,4);
+    Reactions[(react_number+1)%total_reactions].draw(5,0,3);
+    Reactions[(react_number+2)%total_reactions].draw(5,0,-3);
+    Reactions[(react_number+3)%total_reactions].draw(-5,0,-3);
+    Reactions[(react_number+4)%total_reactions].draw(-5,0,3);
 }
 
 //main display function
@@ -54,7 +55,7 @@ void display(){
 
     glMatrixMode(GL_PROJECTION);
 
-    renderStrings(Reactions[react_number].Name,Reactions[react_number].Info);
+    renderStrings(Reactions[react_info_number].Name,Reactions[react_info_number].Info);
 
     if(maxFPS)
         glutPostRedisplay();

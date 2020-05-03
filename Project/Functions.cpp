@@ -146,6 +146,26 @@ void getObj(int button, int state, int x, int y){
     glutPostRedisplay(); 
 }
 
+//checks which reaction information to display depending on the camera position
+void update_react_info_num(float x,float y)
+{
+	if(x>=10 && y>=20)
+		react_info_number=(react_number+4)%total_reactions;
+
+	else if(x>=10 && y<=-20)
+		react_info_number=(react_number+1)%total_reactions;
+
+	else if(x<=-10 && y<=-20)
+		react_info_number=(react_number+2)%total_reactions;
+
+	else if(x<=-10 && y>=20)
+		react_info_number=(react_number+3)%total_reactions;
+
+	else
+		react_info_number= react_number;
+
+}
+
 //keyboard callback function implementing change in scene when pressing certain keys
 void NormalKeyHandler (unsigned char key, int x, int y)
 {
@@ -154,24 +174,28 @@ void NormalKeyHandler (unsigned char key, int x, int y)
         auto ch = normalize(fx,fy,0);
 		view.eyeX += mult*ch[0];
         view.eyeY += mult*ch[1];
+        update_react_info_num(view.eyeX,view.eyeY);
     }
     if (key == 's' || key == 'S')
     {
         auto ch = normalize(fx,fy,0);
 		view.eyeX -= mult*ch[0];
         view.eyeY -= mult*ch[1];
+        update_react_info_num(view.eyeX,view.eyeY);
     }
     if (key == 'a'|| key == 'A')
     {
         auto ch = normalize(-fy,fx,0);
 		view.eyeX += mult*ch[0];
         view.eyeY += mult*ch[1];
+        update_react_info_num(view.eyeX,view.eyeY);
     }
     if (key == 'd' || key == 'D')
     {
         auto ch = normalize(-fy,fx,0);
         view.eyeX -= mult*ch[0];
         view.eyeY -= mult*ch[1];
+        update_react_info_num(view.eyeX,view.eyeY);
     }
     if (key == 'q' || key == 'Q')
     {
@@ -199,7 +223,7 @@ void NormalKeyHandler (unsigned char key, int x, int y)
     if (key == 'm' || key == 'M')
     {
     	yaw=0,pitch=0;
-    	view.eyeX = -22;
+    	view.eyeX = -20;
     	view.eyeY = 0;
     	view.eyeZ = 0;
 
@@ -209,11 +233,13 @@ void NormalKeyHandler (unsigned char key, int x, int y)
     if (key == 'n' || key == 'N')
     {
         react_number= (react_number+1)%total_reactions;
+        update_react_info_num(view.eyeX,view.eyeY);
     }
 
     if (key == 'p' || key == 'P')
     {
         react_number= (react_number-1 + total_reactions)%total_reactions;
+        update_react_info_num(view.eyeX,view.eyeY);
     }
 
     if (key == 27)
