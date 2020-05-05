@@ -58,7 +58,7 @@ void Initialize_Detail()
     const char* tex_name17="./textures/chlorine.bmp";
     const char* tex_name35="./textures/bromine.bmp";
     const char* floor_text_name="./textures/floor.bmp";
-    const char* wall_text_name="./textures/walls.bmp";
+    const char* wall_text_name="./textures/roof.bmp";
     const char* roof_text_name="./textures/floor.bmp";
 
     //texture array
@@ -421,24 +421,24 @@ void drawWalls(){
 
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[0][0]);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[0][1]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[0][1]);
         glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[0][2]);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[0][3]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[0][3]);
 
         glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[1][0]);
         glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[1][1]);
         glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[1][2]);
         glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[1][3]);
 
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[2][0]);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[2][1]);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[2][2]);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[2][3]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[2][0]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[2][1]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[2][2]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[2][3]);
 
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[3][0]);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[3][1]);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[3][2]);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[3][3]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[3][0]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[3][1]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[3][2]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[3][3]);
 
     glEnd();
 
