@@ -242,6 +242,10 @@ void NormalKeyHandler (unsigned char key, int x, int y)
         update_react_info_num(view.eyeX,view.eyeY);
     }
 
+    if (key == 'h' || key == 'H'){
+        simulation = !simulation;
+    }
+
     if (key == 27)
     {
         exit(0);

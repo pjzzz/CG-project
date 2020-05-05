@@ -140,7 +140,7 @@ class Reaction
 public: 
 
 	string Name,Info;
-	vector<Molecule> Reactants,Products;
+	vector<Molecule> Reactants,Products,Intermidiates;
 
     //gets reactants for the given reaction
 	void getReactants()
@@ -176,6 +176,22 @@ public:
 		}
 	} 
 
+    void getIntermidiates()
+    {
+        string filename = "./Reactions/"+Name+"_Intermidiates.txt";
+        //cout<<filename<<endl;
+		fstream file;
+        file.open(filename,ios::in);
+
+		string line;
+		while(getline(file,line))
+		{
+            //cout<<line<<endl;
+			Molecule molecule= ParseData(line);
+			Intermidiates.emplace_back(molecule);
+		}
+    }
+
     void get_Info()
     {
         string filename = "./Reactions/"+Name+"_Info.txt";
@@ -195,6 +211,7 @@ public:
         get_Info();
 		getReactants();
 		getProducts();
+        getIntermidiates();
 	}
 
     //renders current reaction in scene
@@ -276,6 +293,24 @@ public:
 		}
 
 	}
+    void draw(float cor[]){
+        this->draw(cor[0],cor[1],cor[2]);
+    }
+
+    void simulate(float cor[]){
+
+        //pehle sirf draw bhi rakh sakte then so on
+
+        int intm = Intermidiates.size();
+        int molnum = -(intm/4);
+
+        for(int i=0;i<intm;){
+            Intermidiates[i].draw(molnum);
+            Intermidiates[i+1].draw(molnum,-0.5);
+            i+=2;
+            molnum++;
+        }
+    }
 
 };
 

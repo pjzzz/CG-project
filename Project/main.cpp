@@ -7,11 +7,12 @@
 vector<Reaction> Reactions;
 
 void drawReactions(){
-    Reactions[react_number].draw();
-    Reactions[(react_number+1)%total_reactions].draw(5,0,3);
-    Reactions[(react_number+2)%total_reactions].draw(5,0,-3);
-    Reactions[(react_number+3)%total_reactions].draw(-5,0,-3);
-    Reactions[(react_number+4)%total_reactions].draw(-5,0,3);
+    for(int i=0;i<total_reactions;i++)
+        if((i+react_number)%total_reactions == react_info_number and simulation)
+            Reactions[react_info_number].simulate(reaction_cordinates[i]);
+        else
+            Reactions[(i+react_number)%total_reactions].draw(reaction_cordinates[i]);
+
 }
 
 //main display function

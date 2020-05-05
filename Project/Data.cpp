@@ -43,15 +43,25 @@ float mult=1.0f;
 int fullScreen=1;
 int mouseMove=1;
 
+bool simulation=0;
+
 int react_number=0;
 int react_info_number=0;
-int total_reactions=5;
+const int total_reactions=5;
 //Floor Vertices
 float fVert[4][3]= {
     {-80.0,6.0, -50.0},
     {+80.0,6.0, -50.0},
     {+80.0,6.0, +50.0},
     {-80.0,6.0, +50.0}
+};
+
+float reaction_cordinates[total_reactions][3]= {
+    {0.0,0.0,0.0},
+    {+5.0,0.0, 3.0},
+    {+5.0,0.0, -3.0},
+    {-5.0,0.0, -3.0},
+    {-5.0,0.0, +3.0}
 };
 
 float walls[4][4][3]={
