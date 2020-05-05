@@ -59,7 +59,7 @@ public:
         gluQuadricTexture(quad, 40);
         glTranslatef(x+(10*shiftX),y+10*shiftY,z+10*shiftZ);
         gluSphere(quad, radius*Atom_Size, 100, 100);
-        
+        gluDeleteQuadric(quad);
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     }

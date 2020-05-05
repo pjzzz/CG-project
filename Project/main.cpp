@@ -23,6 +23,7 @@ void display(){
     
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    adjustCam();
     gluLookAt(view.eyeX, view.eyeY, view.eyeZ, view.targetX, view.targetY, view.targetZ, 0, 0,1);
     glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
     glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
@@ -31,8 +32,6 @@ void display(){
         glutSetCursor(GLUT_CURSOR_NONE);
     else
         glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
-
-    adjustCam();
     
     glPushMatrix();
     glColor4f(0.3, 0.3, 0.3, 1.0);
@@ -69,7 +68,7 @@ int main(int argc, char** argv)
 {
 
     glutInit(&argc, argv);
-    glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutInitWindowSize (1080, 700);
     glutInitWindowPosition (0, 0);
     glutCreateWindow ("CG-Project");
