@@ -318,8 +318,8 @@ void mouseMovement(int x, int y)
 void timer(int) {
     // yaw+=.1;
     glutPostRedisplay();
-    if(!maxFPS)
-        glutTimerFunc(1000/FPS, timer, 0);
+    //if(!maxFPS)
+    glutTimerFunc(30, timer, 0);
 }
 
 //Calculating frames per second and displaying in window title bar
@@ -447,4 +447,9 @@ void drawWalls(){
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
+}
+
+float interpolate(float start,float end,float& change,float timeto)
+{
+    return start + ((end - start)*(change++))/(timeto*50);
 }

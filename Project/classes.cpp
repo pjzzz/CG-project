@@ -101,6 +101,8 @@ class Molecule{
 public: 
 	vector<Atom> atoms;
 	vector<Bond> bonds;
+    float x = .0f,y=.0f,z=.0f;
+    float ti = 0.0f;
 
     Molecule(){}
 
@@ -113,6 +115,10 @@ public:
             atoms.push_back(molecule_copy.atoms[i]);
         for(int i=0;i<bonds_size;i++)
             bonds.push_back(molecule_copy.bonds[i]);
+        x=molecule_copy.x;
+        y=molecule_copy.y;
+        z=molecule_copy.z;
+        ti=molecule_copy.ti;
     }
 
     //renders current molecule in scene
@@ -130,6 +136,10 @@ public:
 			bond.draw(shiftX,shiftY,shiftZ);
 		}
 	}
+
+    bool translateMolecule(){
+        return true;
+    }
 };
 
 //creates required molecules by parsing data from necessary files
@@ -141,7 +151,7 @@ public:
 
 	string Name,Info;
 	vector<Molecule> Reactants,Products,Intermidiates;
-
+    int step = 0;
     //gets reactants for the given reaction
 	void getReactants()
 	{
@@ -184,10 +194,12 @@ public:
         file.open(filename,ios::in);
 
 		string line;
+        Intermidiates.clear();
 		while(getline(file,line))
 		{
             //cout<<line<<endl;
 			Molecule molecule= ParseData(line);
+            molecule.ti = 0.0f;
 			Intermidiates.emplace_back(molecule);
 		}
     }
@@ -208,6 +220,7 @@ public:
 	{
 		Name = react_name;
         Info = "";
+        step = 0;
         get_Info();
 		getReactants();
 		getProducts();
@@ -291,22 +304,54 @@ public:
             if(molnum==0 && num%2==0)
                 molnum++;
 		}
-
+        this->step = 0;
 	}
     void draw(float cor[]){
         this->draw(cor[0],cor[1],cor[2]);
     }
 
-    void simulate(float cor[]){
+    void simulate(float cor[]){//addition of coordinates still remaining
+
+        //reset intermidiates
+        // if(step!=0)
+        //     this->getIntermidiates();
 
         //pehle sirf draw bhi rakh sakte then so on
 
         int intm = Intermidiates.size();
         int molnum = -(intm/4);
 
-        for(int i=0;i<intm;){
+        //pehle break honge bonds
+        //destroyBonds() // step++
+        if(!step)//all bonds broken bool to be added
+            this->step++;
+
+        //Molecules move to new position
+        int mvMol=0;
+        for(int i = 0;i<intm and this->step == 1;i+=2){
             Intermidiates[i].draw(molnum);
-            Intermidiates[i+1].draw(molnum,-0.5);
+            float ny = interpolate(0.0f,-0.3f,Intermidiates[i+1].ti,1.0f);
+            cout<<ny<<endl;
+            //Intermidiates[i+1].y=ny;
+            Intermidiates[i+1].draw(molnum,ny);
+            if(ny == -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
+                mvMol++;           //break individually by using mvMol
+            molnum++;
+        }
+
+        if(mvMol == intm/2){
+            this->step++;
+            cout<<"sad"<<endl;
+        }
+        // else{
+        //     glutPostRedisplay();
+        //     return;
+        // }
+        //final intermidiates
+        molnum = -(intm / 4);
+        for(int i=0;i<intm and this->step == 2;){
+            Intermidiates[i].draw(molnum);
+            Intermidiates[i+1].draw(molnum,-0.3);
             i+=2;
             molnum++;
         }
