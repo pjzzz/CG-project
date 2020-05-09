@@ -319,7 +319,7 @@ void timer(int) {
     // yaw+=.1;
     glutPostRedisplay();
     //if(!maxFPS)
-    glutTimerFunc(30, timer, 0);
+    glutTimerFunc(1000/60, timer, 0);
 }
 
 //Calculating frames per second and displaying in window title bar
@@ -451,5 +451,5 @@ void drawWalls(){
 
 float interpolate(float start,float end,float& change,float timeto)
 {
-    return start + ((end - start)*(change++))/(timeto*50);
+    return start + ((end - start)*(change))/(timeto*50);
 }

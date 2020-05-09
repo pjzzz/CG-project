@@ -92,6 +92,7 @@ int main(int argc, char** argv)
 
     timer(0);
 
+    glutIdleFunc(display);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutMouseFunc(getObj);

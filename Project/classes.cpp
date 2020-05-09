@@ -127,15 +127,20 @@ public:
 		for(auto it = atoms.begin(); it != atoms.end(); it ++)
 		{
 			Atom atom= (*it);
-			atom.draw(shiftX,shiftY,shiftZ);
+			atom.draw(x+shiftX,y+shiftY,z+shiftZ);
 		}
 
 		for(auto it = bonds.begin(); it != bonds.end(); ++it)
 		{
 			Bond bond= (*it);
-			bond.draw(shiftX,shiftY,shiftZ);
+			bond.draw(x+shiftX,y+shiftY,z+shiftZ);
 		}
 	}
+
+    void resetTimer(){
+        if(ti != 0)
+            ti = 0;
+    }
 
     bool translateMolecule(){
         return true;
@@ -313,8 +318,8 @@ public:
     void simulate(float cor[]){//addition of coordinates still remaining
 
         //reset intermidiates
-        // if(step!=0)
-        //     this->getIntermidiates();
+        if(step==0)
+            this->getIntermidiates();
 
         //pehle sirf draw bhi rakh sakte then so on
 
@@ -330,8 +335,9 @@ public:
         int mvMol=0;
         for(int i = 0;i<intm and this->step == 1;i+=2){
             Intermidiates[i].draw(molnum);
-            float ny = interpolate(0.0f,-0.3f,Intermidiates[i+1].ti,1.0f);
-            cout<<ny<<endl;
+            float ny = interpolate(0.0f,-0.3f,Intermidiates[i+1].ti,.2f);
+            Intermidiates[i+1].ti++;
+            //cout<<Intermidiates[i+1].ti<<endl;
             //Intermidiates[i+1].y=ny;
             Intermidiates[i+1].draw(molnum,ny);
             if(ny == -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
@@ -339,22 +345,58 @@ public:
             molnum++;
         }
 
-        if(mvMol == intm/2){
+        if(mvMol == intm/2 and step == 1){
             this->step++;
-            cout<<"sad"<<endl;
+            //cout<<"sad"<<endl;
         }
-        // else{
-        //     glutPostRedisplay();
-        //     return;
-        // }
         //final intermidiates
         molnum = -(intm / 4);
         for(int i=0;i<intm and this->step == 2;){
-            Intermidiates[i].draw(molnum);
-            Intermidiates[i+1].draw(molnum,-0.3);
+            //Intermidiates[i].x=molnum;
+            Intermidiates[i+1].x = 10*molnum + Intermidiates[i+1].atoms[0].x;
+            Intermidiates[i+1].y = Intermidiates[i+1].atoms[0].y;
+            Intermidiates[i+1].z = Intermidiates[i+1].atoms[0].z;
+            //Intermidiates[i+1].draw(molnum,-0.3);
             i+=2;
             molnum++;
         }
+        if(this->step == 2){
+            this->step++;
+        }
+        molnum = -(intm / 4);
+        mvMol=0;
+        for(int i=0;i<intm and this->step == 3;){
+            Intermidiates[i].draw(molnum);
+            //Intermidiates[i+1].draw(molnum,-0.3);
+            //float ny = interpolate((float)(0),Intermidiates[i+1].y,Intermidiates[i+2].ti,0.3f);
+            float nx = interpolate(0.0f,Intermidiates[i+1].x,Intermidiates[i+2].ti,4.0f);
+            Intermidiates[i+2].ti++;
+            Intermidiates[i+2].draw(nx);
+            i+=4;
+            molnum++;
+            //cout<<nx<<endl;
+            if(nx <= -1.1f){
+                mvMol++;
+            }
+            //cout<<step<<endl;
+        }
+        if(mvMol and step == 3){
+            //cout<<step<<endl;
+            step++;
+            Intermidiates[1].resetTimer();
+        }
+        //cout<<step<<endl;
+        //final products
+        molnum = -(intm / 4);
+        mvMol = 0;
+        for(int i = 0;i<intm and this->step == 4 and Intermidiates[1].ti != 100;i+=4){
+            Products[i].draw(molnum);
+            float ny = interpolate(0.0f,-0.3f,Intermidiates[i+1].ti,.3f);
+            Intermidiates[i+1].ti++;
+            
+        }
+        if(Intermidiates[1].ti == 100 and step == 4)
+            step=0;
     }
 
 };

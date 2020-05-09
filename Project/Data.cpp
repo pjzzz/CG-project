@@ -31,7 +31,7 @@ struct View
 View view(-20, 0, 0, 0, 0, 0);
 
 bool maxFPS=false;
-const int FPS = 120;
+const int FPS = 60;
 int frame = 0, Time = 0, timebase=0;
 float SCRW=1080,centerX;
 float SCRH=700,centerY;
