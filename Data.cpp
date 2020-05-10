@@ -31,7 +31,7 @@ struct View
 View view(-20, 0, 0, 0, 0, 0);
 
 bool maxFPS=false;
-const int FPS = 120;
+const int FPS = 60;
 int frame = 0, Time = 0, timebase=0;
 float SCRW=1080,centerX;
 float SCRH=700,centerY;
@@ -39,13 +39,17 @@ double fx,fy,fz;
 float pitch= 0.f,yaw=0.f;
 float mult=1.0f;
 
+int wait_time=0;
+
 
 int fullScreen=1;
 int mouseMove=1;
 
+bool simulation=0;
+
 int react_number=0;
 int react_info_number=0;
-int total_reactions=5;
+const int total_reactions=5;
 //Floor Vertices
 float fVert[4][3]= {
     {-80.0,6.0, -50.0},
@@ -54,11 +58,19 @@ float fVert[4][3]= {
     {-80.0,6.0, +50.0}
 };
 
+float reaction_cordinates[total_reactions][3]= {
+    {0.0,0.0,0.0},
+    {+5.0,0.0, 3.0},
+    {+5.0,0.0, -3.0},
+    {-5.0,0.0, -3.0},
+    {-5.0,0.0, +3.0}
+};
+
 float walls[4][4][3]={
 	{{-80.0,6.0,-50},{-80.0,-18.0,-50},{-80.0,-18.0,+50.0},{-80.0,6.0,+50.0}},
 	{{+80.0,6.0,-50},{+80.0,-18.0,-50},{+80.0,-18.0,+50.0},{+80.0,6.0,+50.0}},
-	{{-80.0,6.0,-50},{-80.0,-18.0,-50},{+80.0,6.0,-50.0},{+80.0,-18.0,-50.0}},
-	{{-80.0,-18.0,+50.0},{-80.0,6.0,+50.0},{+80.0,-18.0,+50.0},{+80.0,6.0,+50.0}},
+	{{-80.0,6.0,-50},{-80.0,-18.0,-50},{+80.0,-18.0,-50.0},{+80.0,6.0,-50.0}},
+	{{-80.0,6.0,+50.0},{-80.0,-18.0,+50.0},{+80.0,-18.0,+50.0},{+80.0,6.0,+50.0}},
 };
 
 float roof[4][3]= {

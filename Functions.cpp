@@ -58,7 +58,7 @@ void Initialize_Detail()
     const char* tex_name17="./textures/chlorine.bmp";
     const char* tex_name35="./textures/bromine.bmp";
     const char* floor_text_name="./textures/floor.bmp";
-    const char* wall_text_name="./textures/walls.bmp";
+    const char* wall_text_name="./textures/roof.bmp";
     const char* roof_text_name="./textures/floor.bmp";
 
     //texture array
@@ -119,7 +119,7 @@ void reshape(int w, int h){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
-    gluPerspective(45.0, ratio, 1.0 , 100.0);
+    gluPerspective(45.0, ratio, 0.1, 100.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -242,6 +242,10 @@ void NormalKeyHandler (unsigned char key, int x, int y)
         update_react_info_num(view.eyeX,view.eyeY);
     }
 
+    if (key == 'h' || key == 'H'){
+        simulation = !simulation;
+    }
+
     if (key == 27)
     {
         exit(0);
@@ -314,8 +318,8 @@ void mouseMovement(int x, int y)
 void timer(int) {
     // yaw+=.1;
     glutPostRedisplay();
-    if(!maxFPS)
-        glutTimerFunc(1000/FPS, timer, 0);
+    //if(!maxFPS)
+    glutTimerFunc(1000/60, timer, 0);
 }
 
 //Calculating frames per second and displaying in window title bar
@@ -334,7 +338,7 @@ void fps()
 }
 
 //render string at passed cordinated with passed rgb value, it change the x value with every new line
-void PrintString(string s,int x,int y,int r,int g, int b)
+void PrintString(string s,int x,int y,float r,float g, float b)
 {
     void* font = GLUT_BITMAP_9_BY_15;
     int next_line =0;
@@ -352,7 +356,7 @@ void PrintString(string s,int x,int y,int r,int g, int b)
         }
         else
         {
-            glColor3d(r, g, b);
+            glColor3f(r, g, b);
             glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
         }
     }
@@ -361,6 +365,7 @@ void PrintString(string s,int x,int y,int r,int g, int b)
 //Prints all the strings on the screen
 void renderStrings(string reactionName,string reactionInfo)
 {
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
     gluOrtho2D(0.0, 1080, 0.0, 700);
@@ -421,26 +426,31 @@ void drawWalls(){
 
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[0][0]);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[0][1]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[0][1]);
         glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[0][2]);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[0][3]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[0][3]);
 
         glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[1][0]);
         glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[1][1]);
         glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[1][2]);
         glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[1][3]);
 
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[2][0]);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[2][1]);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[2][2]);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[2][3]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[2][0]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[2][1]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[2][2]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[2][3]);
 
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[3][0]);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[3][1]);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[3][2]);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[3][3]);
+        glTexCoord2f(0.0f, 0.0f); glVertex3fv(walls[3][0]);
+        glTexCoord2f(0.0f, 1.0f); glVertex3fv(walls[3][1]);
+        glTexCoord2f(1.0f, 1.0f); glVertex3fv(walls[3][2]);
+        glTexCoord2f(1.0f, 0.0f); glVertex3fv(walls[3][3]);
 
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
+}
+
+float interpolate(float start,float end,float& change,float timeto)
+{
+    return start + ((end - start)*(change))/(timeto*50);
 }

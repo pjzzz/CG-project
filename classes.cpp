@@ -59,7 +59,7 @@ public:
         gluQuadricTexture(quad, 40);
         glTranslatef(x+(10*shiftX),y+10*shiftY,z+10*shiftZ);
         gluSphere(quad, radius*Atom_Size, 100, 100);
-        
+        gluDeleteQuadric(quad);
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     }
@@ -101,6 +101,8 @@ class Molecule{
 public: 
 	vector<Atom> atoms;
 	vector<Bond> bonds;
+    float x = .0f,y=.0f,z=.0f;
+    float ti = 0.0f;
 
     Molecule(){}
 
@@ -113,6 +115,10 @@ public:
             atoms.push_back(molecule_copy.atoms[i]);
         for(int i=0;i<bonds_size;i++)
             bonds.push_back(molecule_copy.bonds[i]);
+        x=molecule_copy.x;
+        y=molecule_copy.y;
+        z=molecule_copy.z;
+        ti=molecule_copy.ti;
     }
 
     //renders current molecule in scene
@@ -121,15 +127,24 @@ public:
 		for(auto it = atoms.begin(); it != atoms.end(); it ++)
 		{
 			Atom atom= (*it);
-			atom.draw(shiftX,shiftY,shiftZ);
+			atom.draw(x+shiftX,y+shiftY,z+shiftZ);
 		}
 
 		for(auto it = bonds.begin(); it != bonds.end(); ++it)
 		{
 			Bond bond= (*it);
-			bond.draw(shiftX,shiftY,shiftZ);
+			bond.draw(x+shiftX,y+shiftY,z+shiftZ);
 		}
 	}
+
+    void resetTimer(){
+        if(ti != 0)
+            ti = 0;
+    }
+
+    bool translateMolecule(){
+        return true;
+    }
 };
 
 //creates required molecules by parsing data from necessary files
@@ -140,8 +155,8 @@ class Reaction
 public: 
 
 	string Name,Info;
-	vector<Molecule> Reactants,Products;
-
+	vector<Molecule> Reactants,Products,Intermidiates;
+    int step = 0;
     //gets reactants for the given reaction
 	void getReactants()
 	{
@@ -176,6 +191,24 @@ public:
 		}
 	} 
 
+    void getIntermidiates()
+    {
+        string filename = "./Reactions/"+Name+"_Intermidiates.txt";
+        //cout<<filename<<endl;
+		fstream file;
+        file.open(filename,ios::in);
+
+		string line;
+        Intermidiates.clear();
+		while(getline(file,line))
+		{
+            //cout<<line<<endl;
+			Molecule molecule= ParseData(line);
+            molecule.ti = 0.0f;
+			Intermidiates.emplace_back(molecule);
+		}
+    }
+
     void get_Info()
     {
         string filename = "./Reactions/"+Name+"_Info.txt";
@@ -192,9 +225,11 @@ public:
 	{
 		Name = react_name;
         Info = "";
+        step = 0;
         get_Info();
 		getReactants();
 		getProducts();
+        getIntermidiates();
 	}
 
     //renders current reaction in scene
@@ -274,8 +309,147 @@ public:
             if(molnum==0 && num%2==0)
                 molnum++;
 		}
-
+        this->step = 0;
 	}
+    void draw(float cor[]){
+        this->draw(cor[0],cor[1],cor[2]);
+    }
+
+    void simulate(float cor[]){//addition of coordinates still remaining
+
+        //reset intermidiates
+        if(step==0)
+            this->getIntermidiates();
+
+        //pehle sirf draw bhi rakh sakte then so on
+
+        int intm = Intermidiates.size();
+        int molnum = -(intm/4);
+
+        //pehle break honge bonds
+        //destroyBonds() // step++
+        if(!step)//all bonds broken bool to be added
+        {
+            // glMatrixMode(GL_PROJECTION);
+            // glPushMatrix();
+            // glLoadIdentity();
+            // gluOrtho2D(0.0, 1080, 0.0, 700);
+            // glMatrixMode(GL_MODELVIEW);
+            // glPushMatrix();
+            // glLoadIdentity();
+
+            // PrintString("Simulating Reaction...",425,330,1.0,0.0,0.0);
+
+            // glMatrixMode(GL_PROJECTION); 
+            // glPopMatrix();
+            // glMatrixMode(GL_MODELVIEW);
+            // glPopMatrix();
+
+            wait_time++;
+            if(wait_time>=30)
+            {
+                wait_time=0;
+                this->step++;
+            }
+        }
+
+        //Molecules move to new position
+        int mvMol=0;
+        for(int i = 0;i<intm and this->step == 1;i+=2){
+            Intermidiates[i].draw(molnum);
+            float ny = interpolate(0.0f,-1.0f,Intermidiates[i+1].ti,1.0f);
+            float nx = 5*ny*ny;
+            Intermidiates[i+1].ti++;
+            //cout<<Intermidiates[i+1].ti<<endl;
+            //Intermidiates[i+1].y=ny;
+            if(i%4==0)
+                Intermidiates[i+1].draw(molnum-nx,ny);
+            else if(i%4==2)
+                Intermidiates[i+1].draw(molnum+nx,ny);
+            if(ny == -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
+                mvMol++;           //break individually by using mvMol
+            molnum++;
+            if(molnum==0 && intm%4==0)
+                molnum++;
+        }
+
+        if(mvMol == intm/2 and step == 1){
+            this->step++;
+            //cout<<"sad"<<endl;
+        }
+
+        //final intermidiates
+        molnum = -(intm / 4);
+        for(int i=0;i<intm and this->step == 2;){
+            //Intermidiates[i].x=molnum;
+            Intermidiates[i+1].x = 10*molnum + Intermidiates[i+1].atoms[0].x;
+            Intermidiates[i+1].y = Intermidiates[i+1].atoms[0].y;
+            Intermidiates[i+1].z = Intermidiates[i+1].atoms[0].z;
+            //Intermidiates[i+1].draw(molnum,-0.3);
+            i+=2;
+            molnum++;
+            if(molnum==0 && intm%4==0)
+                molnum++;
+        }
+
+        if(this->step == 2){
+            this->step++;
+        }
+        molnum = -(intm / 4);
+        mvMol=0;
+
+        for(int i=0;i<intm and this->step == 3;){
+            Intermidiates[i].draw(molnum);
+            //Intermidiates[i+1].draw(molnum,-0.3);
+            //float ny = interpolate((float)(0),Intermidiates[i+1].y,Intermidiates[i+2].ti,0.3f);
+
+            molnum++;
+            if(molnum==0 && intm%4==0)
+                molnum++;
+
+            float nx = interpolate(molnum,Intermidiates[i+1].x/10.0,Intermidiates[i+2].ti,4.0f);
+            //cout<<nx<<endl;
+            float xcenter = (10*molnum+Intermidiates[i+1].x)/20.0;
+            float radius =  molnum - xcenter;
+            float ny = sqrt((radius*radius - (nx-xcenter)*(nx-xcenter)));
+            Intermidiates[i+2].ti++;
+            Intermidiates[i+2].draw(nx,ny*2.0/10.0,ny*9.5/10.0);
+
+            if(nx < Intermidiates[i+1].x/10.0){
+                mvMol++;
+            }
+            
+            i+=4;
+            //cout<<step<<endl;
+        }
+
+        if(mvMol and step == 3){
+            //cout<<step<<endl;
+            step++;
+            Intermidiates[1].resetTimer();
+        }
+        //cout<<step<<endl;
+        //final products
+        int prod_size=Products.size();
+        molnum= -(prod_size/2);
+        for(int i=0;i<prod_size && this->step==4;i++)
+        {
+            Products[i].draw(molnum);
+            molnum++;
+            if(molnum==0 && prod_size%2==0)
+                molnum++;
+        }
+
+        if(this->step==4)
+        {
+            wait_time++;
+            if(wait_time>=60)
+            {
+                wait_time=0;
+                step=0;
+            }
+        }
+    }
 
 };
 

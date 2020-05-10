@@ -7,11 +7,12 @@
 vector<Reaction> Reactions;
 
 void drawReactions(){
-    Reactions[react_number].draw();
-    Reactions[(react_number+1)%total_reactions].draw(5,0,3);
-    Reactions[(react_number+2)%total_reactions].draw(5,0,-3);
-    Reactions[(react_number+3)%total_reactions].draw(-5,0,-3);
-    Reactions[(react_number+4)%total_reactions].draw(-5,0,3);
+    for(int i=0;i<total_reactions;i++)
+        if((i+react_number)%total_reactions == react_info_number and simulation)
+            Reactions[react_info_number].simulate(reaction_cordinates[i]);
+        else
+            Reactions[(i+react_number)%total_reactions].draw(reaction_cordinates[i]);
+
 }
 
 //main display function
@@ -23,6 +24,7 @@ void display(){
     
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    adjustCam();
     gluLookAt(view.eyeX, view.eyeY, view.eyeZ, view.targetX, view.targetY, view.targetZ, 0, 0,1);
     glRotatef(view.xAngle, 0.0f, 0.0f, 1.0f);
     glRotatef(view.yAngle, 1.0f, 0.0f, 0.0f);
@@ -31,8 +33,6 @@ void display(){
         glutSetCursor(GLUT_CURSOR_NONE);
     else
         glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
-
-    adjustCam();
     
     glPushMatrix();
     glColor4f(0.3, 0.3, 0.3, 1.0);
@@ -52,9 +52,7 @@ void display(){
     glPushMatrix();
     drawReactions();
     glPopMatrix();
-
-    glMatrixMode(GL_PROJECTION);
-
+    
     renderStrings(Reactions[react_info_number].Name,Reactions[react_info_number].Info);
 
     if(maxFPS)
@@ -69,7 +67,7 @@ int main(int argc, char** argv)
 {
 
     glutInit(&argc, argv);
-    glutInitDisplayMode (GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_STENCIL | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutInitWindowSize (1080, 700);
     glutInitWindowPosition (0, 0);
     glutCreateWindow ("CG-Project");
@@ -92,6 +90,7 @@ int main(int argc, char** argv)
 
     timer(0);
 
+    glutIdleFunc(display);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutMouseFunc(getObj);
