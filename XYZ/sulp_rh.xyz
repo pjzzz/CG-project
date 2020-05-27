@@ -1,0 +1,4 @@
+1
+single hydrogen from benzene
+H         -1.40216        1.29142       -0.60955
+// H       -2.15666        1.24515        0.00000 // using benzene as H source instead of benzsulpho
