@@ -1,0 +1,5 @@
+Hydrogenation of benzene is an addition
+reaction in which hydrogen atoms are added
+all the way around the benzene ring.
+A cycloalkane is formed. The reaction is:
+C6H6 + H2 -> C6H12

@@ -244,6 +244,11 @@ void NormalKeyHandler (unsigned char key, int x, int y)
 
     if (key == 'h' || key == 'H'){
         simulation = !simulation;
+        if(!simulation)
+        {
+            SimulateStart="";
+            ReactionSteps="";
+        }
     }
 
     if (key == 27)
@@ -329,9 +334,31 @@ void fps()
 	Time=glutGet(GLUT_ELAPSED_TIME);
     if (Time - timebase > 1000) {
         char s[1000];
+
+        float framePerSec=frame*1000.0/(Time-timebase);
+
 		sprintf(s,"KEMIStri FPS:%4.2f",
-			frame*1000.0/(Time-timebase));
-		timebase = Time;
+			framePerSec);
+
+        if(timebase>=1000 && timebase<2000)
+        {
+            FPS= (FPS+framePerSec)/2.0;
+            cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
+        }
+
+        else if(timebase>=2000 && timebase<3000)
+        {
+            FPS= (FPS*2+framePerSec)/3.0;
+            cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
+        }
+
+        else if(timebase>=3000 && timebase<4000)
+        {
+            FPS= (FPS*3+framePerSec)/4.0;
+            cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
+        }
+
+        timebase = Time;
 		frame = 0;
         glutSetWindowTitle(s);
 	}
@@ -377,6 +404,8 @@ void renderStrings(string reactionName,string reactionInfo)
     PrintString(ProjectInfo,10,660,0.0,1.0,1.0);
     PrintString(Help,700,150,1.0,1.0,0.0);
     PrintString(reactionName+" Reaction\n"+reactionInfo,750,660,0.0,1.0,1.0);
+    PrintString(SimulateStart,425,330,0.0,1.0,1.0);
+    PrintString(ReactionSteps,375,600,1.0,0.0,1.0);
     
 
     glMatrixMode(GL_PROJECTION); 
@@ -452,5 +481,5 @@ void drawWalls(){
 
 float interpolate(float start,float end,float& change,float timeto)
 {
-    return start + ((end - start)*(change))/(timeto*50);
+    return start + ((end - start)*(change))/(timeto*FPS);
 }

@@ -1,0 +1,4 @@
+./XYZ/benzene_rh.xyz
+./XYZ/sulp_rh.xyz
+./XYZ/h2so4_rh.xyz
+./XYZ/sulp_rh2.xyz

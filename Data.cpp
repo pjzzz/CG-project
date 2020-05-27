@@ -31,7 +31,7 @@ struct View
 View view(-20, 0, 0, 0, 0, 0);
 
 bool maxFPS=false;
-const int FPS = 60;
+int FPS = 30;
 int frame = 0, Time = 0, timebase=0;
 float SCRW=1080,centerX;
 float SCRH=700,centerY;
@@ -80,7 +80,9 @@ float roof[4][3]= {
     {-80.0,-18.0, +50.0}
 };
 
-string SelectedAtomInfo="---"; 
+string SelectedAtomInfo="---";
+string SimulateStart="";
+string ReactionSteps=""; 
 string ProjectInfo="Chemical Reaction View\nSubmitted by :- \n  Ashutosh Anshul - 170001011 \n  Prayag Jain - 170001037\nSupervised by :- \n  Dr. Somnath Dey";
 string Help="Instructions :-\nClick on atom to get it's info\nw,a,s,d,q,e: Camera Movement\nf: Toggle fullscreen\nm: Toggle mouse movement/selection\nn: Next Reaction\np: Previous Reaction\nesc: Exit";
 

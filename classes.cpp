@@ -155,6 +155,7 @@ class Reaction
 public: 
 
 	string Name,Info;
+    string Steps[5]={"","","","",""};
 	vector<Molecule> Reactants,Products,Intermidiates;
     int step = 0;
     //gets reactants for the given reaction
@@ -209,6 +210,20 @@ public:
 		}
     }
 
+    void get_Steps()
+    {
+        string filename = "./Reactions/"+Name+"_Steps.txt";
+        fstream file;
+        file.open(filename,ios::in);
+        string line;
+        int line_count=0;
+        while(getline(file,line) && line_count<5)
+        {
+            Steps[line_count]= line;
+            line_count++;
+        }
+    }
+
     void get_Info()
     {
         string filename = "./Reactions/"+Name+"_Info.txt";
@@ -230,6 +245,7 @@ public:
 		getReactants();
 		getProducts();
         getIntermidiates();
+        get_Steps();
 	}
 
     //renders current reaction in scene
@@ -317,9 +333,14 @@ public:
 
     void simulate(float cor[]){//addition of coordinates still remaining
 
-        //reset intermidiates
+        //reset intermidiates and reseting ti values of Products
         if(step==0)
+        {
             this->getIntermidiates();
+            int prod_size=Products.size();
+            for(int i=0;i<prod_size;i++)
+                Products[i].ti=0;
+        }
 
         //pehle sirf draw bhi rakh sakte then so on
 
@@ -330,25 +351,13 @@ public:
         //destroyBonds() // step++
         if(!step)//all bonds broken bool to be added
         {
-            // glMatrixMode(GL_PROJECTION);
-            // glPushMatrix();
-            // glLoadIdentity();
-            // gluOrtho2D(0.0, 1080, 0.0, 700);
-            // glMatrixMode(GL_MODELVIEW);
-            // glPushMatrix();
-            // glLoadIdentity();
-
-            // PrintString("Simulating Reaction...",425,330,1.0,0.0,0.0);
-
-            // glMatrixMode(GL_PROJECTION); 
-            // glPopMatrix();
-            // glMatrixMode(GL_MODELVIEW);
-            // glPopMatrix();
-
+            SimulateStart = "Starting Simutaion....";
+            ReactionSteps = "";
             wait_time++;
-            if(wait_time>=30)
+            if(wait_time>=2*FPS)
             {
                 wait_time=0;
+                SimulateStart="";
                 this->step++;
             }
         }
@@ -356,8 +365,11 @@ public:
         //Molecules move to new position
         int mvMol=0;
         for(int i = 0;i<intm and this->step == 1;i+=2){
+
+            ReactionSteps=Steps[0];
+
             Intermidiates[i].draw(molnum);
-            float ny = interpolate(0.0f,-1.0f,Intermidiates[i+1].ti,1.0f);
+            float ny = interpolate(0.0f,-1.0f,Intermidiates[i+1].ti,3.0f);
             float nx = 5*ny*ny;
             Intermidiates[i+1].ti++;
             //cout<<Intermidiates[i+1].ti<<endl;
@@ -366,7 +378,7 @@ public:
                 Intermidiates[i+1].draw(molnum-nx,ny);
             else if(i%4==2)
                 Intermidiates[i+1].draw(molnum+nx,ny);
-            if(ny == -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
+            if(ny <= -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
                 mvMol++;           //break individually by using mvMol
             molnum++;
             if(molnum==0 && intm%4==0)
@@ -399,6 +411,9 @@ public:
         mvMol=0;
 
         for(int i=0;i<intm and this->step == 3;){
+
+            ReactionSteps = Steps[0]+"\n"+Steps[1];
+
             Intermidiates[i].draw(molnum);
             //Intermidiates[i+1].draw(molnum,-0.3);
             //float ny = interpolate((float)(0),Intermidiates[i+1].y,Intermidiates[i+2].ti,0.3f);
@@ -434,7 +449,12 @@ public:
         molnum= -(prod_size/2);
         for(int i=0;i<prod_size && this->step==4;i++)
         {
-            Products[i].draw(molnum);
+            ReactionSteps=Steps[0]+"\n"+Steps[1]+"\n"+Steps[2];
+            float nx = interpolate(molnum-1,molnum,Products[i].ti,2.0f);
+            Products[i].ti++;
+            if(nx>molnum)
+                nx=molnum;
+            Products[i].draw(nx);
             molnum++;
             if(molnum==0 && prod_size%2==0)
                 molnum++;
@@ -443,7 +463,7 @@ public:
         if(this->step==4)
         {
             wait_time++;
-            if(wait_time>=60)
+            if(wait_time>=4*FPS)
             {
                 wait_time=0;
                 step=0;

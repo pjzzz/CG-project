@@ -1,0 +1,5 @@
+Friedel-Crafts Alkylation refers to the replacement
+of an aromatic proton with an alkyl group. This is 
+done through an electrophilic attack on the aromatic
+ring with the help of a carbocation. The reaction is:
+C6H6 + CH3Cl -> C6H5-CH3
