@@ -394,9 +394,19 @@ public:
         molnum = -(intm / 4);
         for(int i=0;i<intm and this->step == 2;){
             //Intermidiates[i].x=molnum;
-            Intermidiates[i+1].x = 10*molnum + Intermidiates[i+1].atoms[0].x;
-            Intermidiates[i+1].y = Intermidiates[i+1].atoms[0].y;
-            Intermidiates[i+1].z = Intermidiates[i+1].atoms[0].z;
+            if(Intermidiates[i+1].atoms.size()!=0)
+            {
+                Intermidiates[i+1].x = 10*molnum + Intermidiates[i+1].atoms[0].x;
+                Intermidiates[i+1].y = Intermidiates[i+1].atoms[0].y;
+                Intermidiates[i+1].z = Intermidiates[i+1].atoms[0].z;
+            }
+            else
+            {
+                Intermidiates[i+1].x = 10*molnum;
+                Intermidiates[i+1].y = 0;
+                Intermidiates[i+1].z = 0;
+            }
+            
             //Intermidiates[i+1].draw(molnum,-0.3);
             i+=2;
             molnum++;
