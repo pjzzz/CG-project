@@ -331,7 +331,7 @@ public:
         this->draw(cor[0],cor[1],cor[2]);
     }
 
-    void simulate(float cor[]){//addition of coordinates still remaining
+    void simulate(float shiftX=0,float shiftY=0,float shiftZ=0){//addition of coordinates still remaining
 
         //reset intermidiates and reseting ti values of Products
         if(step==0)
@@ -368,16 +368,16 @@ public:
 
             ReactionSteps=Steps[0];
 
-            Intermidiates[i].draw(molnum);
+            Intermidiates[i].draw(shiftX+molnum,shiftY,shiftZ);
             float ny = interpolate(0.0f,-1.0f,Intermidiates[i+1].ti,3.0f);
             float nx = 5*ny*ny;
             Intermidiates[i+1].ti++;
             //cout<<Intermidiates[i+1].ti<<endl;
             //Intermidiates[i+1].y=ny;
             if(i%4==0)
-                Intermidiates[i+1].draw(molnum-nx,ny);
+                Intermidiates[i+1].draw(shiftX+molnum-nx,shiftY+ny,shiftZ);
             else if(i%4==2)
-                Intermidiates[i+1].draw(molnum+nx,ny);
+                Intermidiates[i+1].draw(shiftX+molnum+nx,shiftY+ny,shiftZ);
             if(ny <= -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
                 mvMol++;           //break individually by using mvMol
             molnum++;
@@ -414,7 +414,7 @@ public:
 
             ReactionSteps = Steps[0]+"\n"+Steps[1];
 
-            Intermidiates[i].draw(molnum);
+            Intermidiates[i].draw(shiftX+molnum,shiftY,shiftZ);
             //Intermidiates[i+1].draw(molnum,-0.3);
             //float ny = interpolate((float)(0),Intermidiates[i+1].y,Intermidiates[i+2].ti,0.3f);
 
@@ -428,7 +428,7 @@ public:
             float radius =  molnum - xcenter;
             float ny = sqrt((radius*radius - (nx-xcenter)*(nx-xcenter)));
             Intermidiates[i+2].ti++;
-            Intermidiates[i+2].draw(nx,ny*2.0/10.0,ny*9.5/10.0);
+            Intermidiates[i+2].draw(shiftX+nx,shiftY+ny*2.0/10.0,shiftZ+ny*9.5/10.0);
 
             if(nx < Intermidiates[i+1].x/10.0){
                 mvMol++;
@@ -454,7 +454,7 @@ public:
             Products[i].ti++;
             if(nx>molnum)
                 nx=molnum;
-            Products[i].draw(nx);
+            Products[i].draw(shiftX+nx,shiftY,shiftZ);
             molnum++;
             if(molnum==0 && prod_size%2==0)
                 molnum++;
@@ -469,6 +469,10 @@ public:
                 step=0;
             }
         }
+    }
+
+    void simulate(float cor[]){
+        this->simulate(cor[0],cor[1],cor[2]);
     }
 
 };

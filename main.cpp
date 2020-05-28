@@ -8,7 +8,12 @@ vector<Reaction> Reactions;
 
 void drawReactions(){
     for(int i=0;i<total_reactions;i++)
-        if((i+react_number)%total_reactions == react_info_number and simulation)
+        if ((i+react_number)%total_reactions == react_info_number and simulation and (react_info_number==1 or react_info_number==3))
+        {
+            SimulateStart="Simulation Not Available";
+            ReactionSteps="";
+        }
+        else if((i+react_number)%total_reactions == react_info_number and simulation)
             Reactions[react_info_number].simulate(reaction_cordinates[i]);
         else
             Reactions[(i+react_number)%total_reactions].draw(reaction_cordinates[i]);

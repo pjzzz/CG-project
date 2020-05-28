@@ -1,0 +1,4 @@
+./XYZ/benzene_br1.xyz
+./XYZ/benzene_br2.xyz
+./XYZ/bromine_br1.xyz
+./XYZ/bromine_br2.xyz

@@ -1,0 +1,4 @@
+./XYZ/benzene_fc1.xyz
+./XYZ/benzene_fc2.xyz
+./XYZ/ch3cl_fc1.xyz
+./XYZ/ch3cl_fc2.xyz
