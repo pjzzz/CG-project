@@ -58,7 +58,7 @@ void Initialize_Detail()
     const char* tex_name17="./textures/chlorine.bmp";
     const char* tex_name35="./textures/bromine.bmp";
     const char* floor_text_name="./textures/floor.bmp";
-    const char* wall_text_name="./textures/roof.bmp";
+    const char* wall_text_name="./textures/walls.bmp";
     const char* roof_text_name="./textures/floor.bmp";
 
     //texture array
@@ -337,26 +337,26 @@ void fps()
 
         float framePerSec=frame*1000.0/(Time-timebase);
 
-		sprintf(s,"KEMIStri FPS:%4.2f",
+		sprintf(s,"Chemistry Simulation FPS:%4.2f",
 			framePerSec);
 
-        if(timebase>=1000 && timebase<2000)
-        {
-            FPS= (FPS+framePerSec)/2.0;
-            cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
-        }
+        // if(timebase>=1000 && timebase<2000)
+        // {
+        //     FPS= (FPS+framePerSec)/2.0;
+        //     cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
+        // }
 
-        else if(timebase>=2000 && timebase<3000)
-        {
-            FPS= (FPS*2+framePerSec)/3.0;
-            cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
-        }
+        // else if(timebase>=2000 && timebase<3000)
+        // {
+        //     FPS= (FPS*2+framePerSec)/3.0;
+        //     cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
+        // }
 
-        else if(timebase>=3000 && timebase<4000)
-        {
-            FPS= (FPS*3+framePerSec)/4.0;
-            cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
-        }
+        // else if(timebase>=3000 && timebase<4000)
+        // {
+        //     FPS= (FPS*3+framePerSec)/4.0;
+        //     cout<<timebase<<" "<<framePerSec<<" "<<FPS<<endl;
+        // }
 
         timebase = Time;
 		frame = 0;
@@ -479,6 +479,7 @@ void drawWalls(){
     glDisable(GL_TEXTURE_2D);
 }
 
+//to calculate animation path of the object/body molecule
 float interpolate(float start,float end,float& change,float timeto)
 {
     return start + ((end - start)*(change))/(timeto*FPS);

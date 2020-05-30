@@ -333,7 +333,7 @@ public:
 
     void simulate(float shiftX=0,float shiftY=0,float shiftZ=0){//addition of coordinates still remaining
 
-        //reset intermidiates and reseting ti values of Products
+        //reset intermidiates and reseting the values of Products and setting up the Intermidiates
         if(step==0)
         {
             this->getIntermidiates();
@@ -342,14 +342,11 @@ public:
                 Products[i].ti=0;
         }
 
-        //pehle sirf draw bhi rakh sakte then so on
-
         int intm = Intermidiates.size();
         int molnum = -(intm/4);
 
-        //pehle break honge bonds
-        //destroyBonds() // step++
-        if(!step)//all bonds broken bool to be added
+        // step++
+        if(!step)//wait time for scene to change
         {
             SimulateStart = "Starting Simutaion....";
             ReactionSteps = "";
@@ -362,7 +359,7 @@ public:
             }
         }
 
-        //Molecules move to new position
+        //Molecules move to new position and residual molecules disappear parabolically out of the scene
         int mvMol=0;
         for(int i = 0;i<intm and this->step == 1;i+=2){
 
@@ -372,25 +369,24 @@ public:
             float ny = interpolate(0.0f,-1.0f,Intermidiates[i+1].ti,3.0f);
             float nx = 5*ny*ny;
             Intermidiates[i+1].ti++;
-            //cout<<Intermidiates[i+1].ti<<endl;
-            //Intermidiates[i+1].y=ny;
+
             if(i%4==0)
                 Intermidiates[i+1].draw(shiftX+molnum-nx,shiftY+ny,shiftZ);
             else if(i%4==2)
                 Intermidiates[i+1].draw(shiftX+molnum+nx,shiftY+ny,shiftZ);
-            if(ny <= -0.3f)//translateMolecule())//all broken molecules move simultaneously, if we want we can 
-                mvMol++;           //break individually by using mvMol
+            if(ny <= -0.3f) 
+                mvMol++;
             molnum++;
             if(molnum==0 && intm%4==0)
                 molnum++;
         }
 
+        //increamenting step variable to move to next phase of the reaction
         if(mvMol == intm/2 and step == 1){
             this->step++;
-            //cout<<"sad"<<endl;
         }
 
-        //final intermidiates
+        //final intermidiates which form final product get there data members updated
         molnum = -(intm / 4);
         for(int i=0;i<intm and this->step == 2;){
             //Intermidiates[i].x=molnum;
@@ -414,26 +410,26 @@ public:
                 molnum++;
         }
 
+        //incrementing step o move to next phase
         if(this->step == 2){
             this->step++;
         }
         molnum = -(intm / 4);
         mvMol=0;
 
+        //Final Intermidiates move(animate) towards each other to form final product
         for(int i=0;i<intm and this->step == 3;){
 
             ReactionSteps = Steps[0]+"\n"+Steps[1];
 
             Intermidiates[i].draw(shiftX+molnum,shiftY,shiftZ);
-            //Intermidiates[i+1].draw(molnum,-0.3);
-            //float ny = interpolate((float)(0),Intermidiates[i+1].y,Intermidiates[i+2].ti,0.3f);
-
+        
             molnum++;
             if(molnum==0 && intm%4==0)
                 molnum++;
 
             float nx = interpolate(molnum,Intermidiates[i+1].x/10.0,Intermidiates[i+2].ti,4.0f);
-            //cout<<nx<<endl;
+            
             float xcenter = (10*molnum+Intermidiates[i+1].x)/20.0;
             float radius =  molnum - xcenter;
             float ny = sqrt((radius*radius - (nx-xcenter)*(nx-xcenter)));
@@ -445,18 +441,19 @@ public:
             }
             
             i+=4;
-            //cout<<step<<endl;
+
         }
 
+        //incrementing the step to initialize final phase of the reaction
         if(mvMol and step == 3){
-            //cout<<step<<endl;
             step++;
             Intermidiates[1].resetTimer();
         }
-        //cout<<step<<endl;
-        //final products
+    
         int prod_size=Products.size();
         molnum= -(prod_size/2);
+
+        //moving the product formed to the center of reaction space
         for(int i=0;i<prod_size && this->step==4;i++)
         {
             ReactionSteps=Steps[0]+"\n"+Steps[1]+"\n"+Steps[2];
@@ -470,6 +467,7 @@ public:
                 molnum++;
         }
 
+        //ressetting the reaction variable step to restart the loop
         if(this->step==4)
         {
             wait_time++;
@@ -481,6 +479,7 @@ public:
         }
     }
 
+    //simply overloading simulate function
     void simulate(float cor[]){
         this->simulate(cor[0],cor[1],cor[2]);
     }
